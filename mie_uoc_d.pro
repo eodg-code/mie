@@ -1,55 +1,62 @@
 PRO Mie_Uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
 
+;+
 ; NAME:
-;       MIE_UOC_D
+;     MIE_UOC_D
+;
 ; PURPOSE:
-;       Calculates the scattering parameters of a series of particles
-;       using the Mie scattering theory.
+;     Calculates the scattering parameters of a series of particles
+;     using the Mie scattering theory.
+;
 ; CATEGORY:
-;       EODG Mie routines
+;     EODG Mie routines
+;
 ; CALLING SEQUENCE:
-;       mie_uoc_d, Dx, Cm, Inp, Dqv $
-;       [, Xs1] [, Xs2] [, Dqxt] [, Dqsc] [, Dqbk] [, Dg] [, Dph]
+;     mie_uoc_d, Dx, Cm, Inp, Dqv $
+;     [, Xs1] [, Xs2] [, Dqxt] [, Dqsc] [, Dqbk] [, Dg] [, Dph]
+;
 ; INPUTS:
-;       Dx:         A 1D array of particle size parameters
-;       Cm:         The complex refractive index of the partilces
-;       Inp:        Number of scattering angles at which to calculate
-;                   intensity functions etc
-;       Dqv:        The cosine of the scattering angles at which to
-;                   calculate the intensity functions etc
-; OUTPUT PARAMETERS:
-;       Xs1:        The first amplitude function - amplitude of light
-;                   polarised in the plane perpendicular to the
-;                   directions of inicident light propogation and
-;                   observation.
-;       Xs2:        The second amplitude function - amplitude of light
-;                   polarised in the plane parallel to the directions
-;                   of inicident light propogation and observation.
-;                   NB. Xs1 and Xs2 are complex arrays of the same
-;                   dimension as Dqv
-;       Dqxt:       The extinction efficiency
-;       Dqsc:       The scattering efficiency
-;       Dg:         The asymetry parameter
-;       Dph:        The phase function - an array of the same
-;                                        dimension as Dqv.
-; MODIFICATION HISTORY
-;       G. Thomas 1998 mie_uoc.pro (translation of mieint.f to IDL)
+;     Dx:   A 1D array of particle size parameters
+;     Cm:   The complex refractive index of the partilces
+;     Inp:  Number of scattering angles at which to calculate intensity
+;           functions etc
+;     Dqv:  The cosine of the scattering angles at which to calculate
+;           the intensity functions etc
 ;
-;       D. Grainger 2001(?) mie_uoc_d.pro (Added support for arrays of
-;       particle sizes and included calculation of phase function)
+; KEYWORD INPUTS:
 ;
-;       G. Thomas Sept. 2003 (Put into EODG routines format)
+; OUTPUTS:
+;     Xs1:  The first amplitude function - amplitude of light polarised
+;           in the plane perpendicular to the directions of inicident
+;           light propogation and observation.
+;     Xs2:  The second amplitude function - amplitude of light polarised
+;           in the plane parallel to the directions of inicident light
+;           propogation and observation. NB. Xs1 and Xs2 are complex
+;           arrays of the same dimension as Dqv
+;     Dqxt: The extinction efficiency
+;     Dqsc: The scattering efficiency
+;     Dg:   The asymetry parameter
+;     Dph:  The phase function - an array of the same dimension as Dqv.
+;
+; KEYWORD OUTPUTS:
+;
+; MODIFICATION HISTORY:
+;       G. Thomas, 1998: mie_uoc.pro (translation of mieint.f to IDL)
+;       D. Grainger, 2001: mie_uoc_d.pro (Added support for arrays of
+;           particle sizes and included calculation of phase function)
+;       G. Thomas, Sept 2003: (Put into EODG routines format)
+;-
 
   Imaxx = 12000
   RIMax = 2.5
   Itermax = Imaxx * RIMax
   Imaxnp = 1100		; Change this as required
   Sizes = N_Elements(Dx)
-  If (N_Elements(Inp) Eq 0) Then begin
+  if (N_Elements(Inp) Eq 0) Then begin
     Inp = 1
     Dqv = 0
-  Endif
- 
+  endif
+
   Xs1 = ComplexArr(Inp,Sizes)
   Xs2 = ComplexArr(Inp,Sizes)
   Dqxt = Dblarr(Sizes)

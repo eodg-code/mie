@@ -3,93 +3,93 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
                 dQscadx,dQscadRem,dQscadImm,$
                 i1,i2,di1dx,di2dx,di1dRem,di1dImm,di2dRem,di2dImm,$
                 silent=silent, $
-                asym=asym,dasymdx=dasymdx,dasymdRem=dasymdRem,dasymdImm=dasymdImm
+                asym=asym,dasymdx=dasymdx, $
+                dasymdRem=dasymdRem,dasymdImm=dasymdImm
 
 ;+
 ; NAME:
-;       MIE_DERIVS
+;     MIE_DERIVS
+;
 ; PURPOSE:
-;       Calculates the scattering parameters and their analytical
-;       derivatives of a series of particles using Mie scattering
-;       theory.
-;       
-;       A the derivation of expressions for the analytical derivatives 
-;       of Mie scattering terms is covered by:
-;       Grainger, R.G., J. Lucas, G.E. Thomas, G. Ewan, "The Calculation 
-;       of Mie Derivatives", Submitted to Appl. Opt., 2004.
+;     Calculates the scattering parameters and their analytical
+;     derivatives of a series of particles using Mie scattering theory.
+;
+;     A the derivation of expressions for the analytical derivatives of
+;     Mie scattering terms is covered by:
+;     Grainger, R.G., J. Lucas, G.E. Thomas, G. Ewan, "The Calculation
+;     of Mie Derivatives", Submitted to Appl. Opt., 2004.
+;
 ; CATEGORY:
-;       EODG Mie routines
+;     EODG Mie routines
+;
 ; CALLING SEQUENCE:
-;       mie_derivs, x, Cm, Dqv $
-;       [, Qext][, Qsca][, dQextdx][, dQextdRem][, dQextdImm] $
-;       [, dQscadx][, dQscadRem][, dQscadImm][, i1][, i2] $
-;       [, di1dx][, di2dx][, di1dRem][, di1dImm][, di2dRem][, di2dImm] $
-;       [, ASYM=asym][, dASYMdx=dasymdx][, dASYMdRem=dasymdrem] $
-;       [, dASYMdImm=dASYMdrem][, /SILENT]
+;     mie_derivs, x, Cm, Dqv $
+;     [, Qext][, Qsca][, dQextdx][, dQextdRem][, dQextdImm] $
+;     [, dQscadx][, dQscadRem][, dQscadImm][, i1][, i2] $
+;     [, di1dx][, di2dx][, di1dRem][, di1dImm][, di2dRem][, di2dImm] $
+;     [, ASYM=asym][, dASYMdx=dasymdx][, dASYMdRem=dasymdrem] $
+;     [, dASYMdImm=dASYMdrem][, /SILENT]
+;
 ; INPUTS:
-;       x:          The particle size parameter
-;       Cm:         The complex refractive index of the particle
-;       Dqv:        The cosine of the scattering angles at which to
-;                   calculate the intensity functions etc
-; OUTPUT PARAMETERS:
-;       Qext:       The extinction efficiency
-;       Qsca:       The extinction efficiency
-;       dQextdx:    Derivative of the extinction efficiency wrt the
-;                   particle size parameter
-;       dQextdRem:  Derivative of the extinction efficiency wrt the
-;                   real part of the refractive index
-;       dQextdImm:  Derivative of the extinction efficiency wrt the
-;                   imaginary part of the refractive index
-;       dQscadx:    Derivative of the scattering efficiency wrt the
-;                   particle size parameter
-;       dQscadRem:  Derivative of the scattering efficiency wrt the
-;                   real part of the refractive index
-;       dQscadImm:  Derivative of the scattering efficiency wrt the
-;                   imaginary part of the refractive index
-;       i1:         The first intensity function - intensity of light
-;                   polarized in the plane perpendicular to the
-;                   directions of incident light propagation and
-;                   observation.
-;       i2:         The second intensity function - intensity of light
-;                   polarized in the plane parallel to the directions
-;                   of incident light propagation and observation.
-;       di1dx:      Derivatives of the intensity functions wrt the 
-;       di2dx:      particle size parameter
-;       di1dRem:    Derivatives of the first intensity function wrt to
-;       di1dImm:    the real and imaginary parts of the refractive index
-;       di2dRem:    Derivatives of the second intensity function wrt
-;       di2dImm:    to the real and imaginary parts of the refractive
-;                   index
-;                   NB. The values of involving the intensity
-;                   functions are arrays of the same dimension
-;                   as dqv
+;     x:         The particle size parameter
+;     Cm:        The complex refractive index of the particle
+;     Dqv:       The cosine of the scattering angles at which to
+;                calculate the intensity functions etc
 ;
-; KEYWORD OUTPUT PARAMETERS:  
-;       asym:       The asymmetry parameter.
-;       dasymdx:    Derivative of asymmetry wrt size parameter.
-;       dasymdRem:  Derivative of asymmetry wrt real pt of RI.
-;       dasymdImm:  Derivative of asymmetry wrt imag pt of RI.
-;                
-; KEYWORDS:
-;       SILENT:     Don't give warnings about positive k values.
+; KEYWORD INPUTS:
+;     SILENT:    Don't give warnings about positive k values.
 ;
-; MODIFICATION HISTORY
-;       J. Lucas    2002 miederivs.pro (Main line programme)
+; OUTPUTS:
+;     Qext:      The extinction efficiency
+;     Qsca:      The extinction efficiency
+;     dQextdx:   Derivative of the extinction efficiency wrt the
+;                particle size parameter
+;     dQextdRem: Derivative of the extinction efficiency wrt the
+;                real part of the refractive index
+;     dQextdImm: Derivative of the extinction efficiency wrt the
+;                imaginary part of the refractive index
+;     dQscadx:   Derivative of the scattering efficiency wrt the
+;                particle size parameter
+;     dQscadRem: Derivative of the scattering efficiency wrt the
+;                real part of the refractive index
+;     dQscadImm: Derivative of the scattering efficiency wrt the
+;                imaginary part of the refractive index
+;     i1:        The first intensity function - intensity of light
+;                polarized in the plane perpendicular to the directions
+;                of incident light propagation and observation.
+;     i2:        The second intensity function - intensity of light
+;                polarized in the plane parallel to the directions of
+;                incident light propagation and observation.
+;     di1dx:     Derivatives of the intensity functions wrt the
+;     di2dx:     particle size parameter
+;     di1dRem:   Derivatives of the first intensity function wrt to
+;     di1dImm:   the real and imaginary parts of the refractive index
+;     di2dRem:   Derivatives of the second intensity function wrt
+;     di2dImm:   to the real and imaginary parts of the refractive index
+;                NB. The values of involving the intensity functions
+;                are arrays of the same dimension as dqv
 ;
-;       D. Grainger 2002 pro_miederivs.pro (Procedure version of
-;       miederivs.pro)
+; KEYWORD OUTPUTS:
+;     asym:       The asymmetry parameter.
+;     dasymdx:    Derivative of asymmetry wrt size parameter.
+;     dasymdRem:  Derivative of asymmetry wrt real pt of RI.
+;     dasymdImm:  Derivative of asymmetry wrt imag pt of RI.
 ;
-;       G. Thomas Sept. 2003 mie_derivs.pro (Put into EODG routines
-;       format)
+; RESTRICTIONS:
 ;
-;       J. Graham (UC Berkeley) Feb. 2004 (Introduced explicit 
-;       double precision numerical values into all computational 
-;       expressions)
-;
-;       G. Thomas Feb. 2004 Header updated.
-;       A. Smith  Aug. 2010 Added positive k warning.
-;       A. Smith  Apr. 2013 Added asymmetry parameter.
+; MODIFICATION HISTORY:
+;     J. Lucas, 2002: miederivs.pro (Main line programme)
+;     D. Grainger, 2002: pro_miederivs.pro (Procedure version of
+;         miederivs.pro)
+;     G. Thomas, Sep 2003: mie_derivs.pro (Put into EODG routines
+;         format)
+;     J. Graham (UC Berkeley), Feb 2004: (Introduced explicit double
+;         precision numerical values into all computational expressions)
+;     G. Thomas, Feb 2004: Header updated.
+;     A. Smith, Aug 2010: Added positive k warning.
+;     A. Smith, Apr 2013: Added asymmetry parameter.
 ;-
+
 if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
     message, /continue,'Warning: Imaginary part of refractive index '+$
              'should be negative for absorbing particles. '+$
@@ -134,7 +134,7 @@ dQscadRem = 0.D0
 dQscadImm = 0.D0
 
 IF ARG_PRESENT(asym) OR $
-   ARG_PRESENT(dasymdx) OR $ 
+   ARG_PRESENT(dasymdx) OR $
    ARG_PRESENT(dasymdRem) OR $
    ARG_PRESENT(dasymdImm) THEN BEGIN
 
@@ -157,16 +157,16 @@ dSmdRem = 0.D0
 dSmdImm = 0.D0
 
 FOR n = 1,Nstop DO BEGIN
-    
+
     psi1 = Double(2d0*n-1d0)*psi0/x - psim1
     chi1 = Double(2d0*n-1d0)*chi0/x - chim1 ;the recurrence relations
-   
+
     zeta = DCOMPLEX(psi1,chi1)
     zetanm1 = DCOMPLEX(psi0,chi0)
 
     a_n = ((D(n)/m+n/x)*psi1-psi0) / ((D(n)/m+n/x)*zeta-zetanm1)
     b_n = ((D(n)*m+n/x)*psi1-psi0) / ((D(n)*m+n/x)*zeta-zetanm1) ;formulae D9,D10
-    
+
     i = dcomplex(0,1)
     dadx = i*((D(n)^2d0)*(1/m^2d0-1d0) + n*(n+1d0)*(1d0/y^2d0-1d0/x^2d0)) / ((D(n)/m+n/x)*zeta-zetanm1)^2d0
     dbdx = i*(1- m^2d0 + n*(n+1d0)*(m^2d0/y^2d0-1d0/x^2d0)) / ((D(n)*m+n/x)*zeta-zetanm1)^2d0
@@ -207,7 +207,7 @@ FOR n = 1,Nstop DO BEGIN
           dn = DOUBLE( n-1 )
 
           pre0 = dn * ( 2d0 + dn ) / (dn + 1d0)
-          pre1 = ( 2d0*dn + 1d0) / dn / (dn + 1d0) 
+          pre1 = ( 2d0*dn + 1d0) / dn / (dn + 1d0)
 
 
           ; At the end, we'll do asym=asym * 4/x^2
@@ -228,7 +228,7 @@ FOR n = 1,Nstop DO BEGIN
                                  CONJ(b_n)*dbdkm1 + bnm1*CONJ(dbdImm)   ) + $
                   pre1 * DOUBLE( dadkm1*CONJ(bnm1) + anm1*CONJ(dbdkm1) )
 
-          
+
        ENDIF
        anm1 = a_n
        bnm1 = b_n
@@ -240,14 +240,14 @@ FOR n = 1,Nstop DO BEGIN
        dbdkm1 = dbdImm
 
     ENDIF
-                             
+
    ;formulae for the derivatives of the Qs
-    
+
     psim1 = psi0
     psi0 = psi1
     chim1 = chi0
     chi0 = chi1
-    
+
     s = Dqv*Pi1
     t = s - Pi0
     Tau1 = n*t - Pi0
@@ -261,7 +261,7 @@ FOR n = 1,Nstop DO BEGIN
     dSmdImm = (2d0*n+1d0)*(dadImm-dbdImm)*(Pi1-Tau1)/(n^2d0+n) + dSmdImm
     Pi0 = Pi1
     Pi1 = s + t*(n+1d0)/n
-    
+
 ENDFOR
 
 Qext = 2d0*Qext/x^2d0

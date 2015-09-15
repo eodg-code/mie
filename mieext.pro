@@ -63,7 +63,7 @@ Pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
         APB = A2 * (A + B)
         AMB = A2 * (A - B)
 
-  
+
         Psi0 = Psi1
         Psi1 = Psi
         Chi0 = Chi1

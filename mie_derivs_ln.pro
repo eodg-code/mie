@@ -1,85 +1,96 @@
-    PRO mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca,dBextdN,dBextdRm,dBextdS,dBscadN,dBscadRm,dBscadS,i1,i2,di1dN,di1dRm,di1dS,di2dN,di2dRm,di2dS
+    PRO mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, $
+                       dBextdN,dBextdRm,dBextdS,dBscadN,dBscadRm,dBscadS, $
+                       i1,i2,di1dN,di1dRm,di1dS,di2dN,di2dRm,di2dS
 
+;+
 ; NAME:
-;       MIE_DERIVS_LN
+;     MIE_DERIVS_LN
+;
 ; PURPOSE:
-;       Calculates the scattering parameters and their analytical
-;       deritatives (wrt the parameters of the distribution) of a log
-;       normal distribution of spherical particles.
+;     Calculates the scattering parameters and their analytical
+;     deritatives (wrt the parameters of the distribution) of a log
+;     normal distribution of spherical particles.
 ;
-;       A the derivation of expressions for the analytical derivatives
-;       of Mie scattering terms is covered by:
-;       Grainger, R.G., J. Lucas, G.E. Thomas, G. Ewan, "The Calculation
-;       of Mie Derivatives", Submitted to Appl. Opt., 2004.
+;     A the derivation of expressions for the analytical derivatives of
+;     Mie scattering terms is covered by:
+;     Grainger, R.G., J. Lucas, G.E. Thomas, G. Ewan, "The Calculation
+;     of Mie Derivatives", Submitted to Appl. Opt., 2004.
+;
 ; CATEGORY:
-;       EODG Mie routines
+;     EODG Mie routines
+;
 ; CALLING SEQUENCE:
-;       mie_derivs_ln, N, Rm, S, Wavenumber, Cm[, Dqv=dqv] $
-;       [, Bext][, Bsca][, dBextdN][, dBextdRm][, dBextdS] $
-;       [, dBscadN][, dBscadRm][, dBscadS][, i1][, i2] $
-;       [, di1dN][, di1dRm][, di1dS][, di2dN][, di2dRm][, di2dS]
+;     mie_derivs_ln, N, Rm, S, Wavenumber, Cm[, Dqv=dqv] $
+;     [, Bext][, Bsca][, dBextdN][, dBextdRm][, dBextdS] $
+;     [, dBscadN][, dBscadRm][, dBscadS][, i1][, i2] $
+;     [, di1dN][, di1dRm][, di1dS][, di2dN][, di2dRm][, di2dS]
+;
 ; INPUTS:
-;       N:          The number density of the particle distribution
-;       Rm:         Median radius of the particle distribution
-;                   (microns)
-;       S:          The spread of the distribution, such that the
-;                   stardard deviation of ln(r) is ln(S)
-;       Wavenumber: Wavenumber of light, defined as 1/wavelength. A
-;                   positive scalar whos units match those of Rm.
-;       Cm:         Complex refractive index
-; OPTIONAL KEYWORD PARAMETERS:
-;       Dqv:        An array of the cosines of scattering angles at
-;                   which to compute the intensity functions.
-; OUTPUT PARAMETERS:
-;       Bext:       The volume extinction coefficient
-;       Bsca:       The volume scattering coefficient
-;       dBextdN:    Derivative of the extinction coefficient wrt the
-;                   number density
-;       dBextdRm:   Derivative of the extinction coefficient wrt the
-;                   mean radius
-;       dBextdS:    Derivative of the extinction coefficient wrt the
-;                   spread
-;       dBscadN:    Derivative of the scattering coefficient wrt the
-;                   number density
-;       dBscadRm:   Derivative of the scattering coefficient wrt the
-;                   mean radius
-;       dBscadS:    Derivative of the scattering coefficient wrt the
-;                   spread
-;       i1:         The first intensity function - intensity of light
-;                   polarised in the plane perpendicular to the
-;                   directions of inicident light propogation and
-;                   observation. Only caculated if dqv is specified.
-;       i2:         The second intensity function - intensity of light
-;                   polarised in the plane parallel to the directions
-;                   of inicident light propogation and
-;                   observation. Only caculated if dqv is specified.
-;       di1dN:      Derivatives of the first intensity function wrt the
-;                   number density
-;       di1dRm:     Derivatives of the first intensity function wrt the
-;                   mean radius
-;       di1dS:      Derivatives of the first intensity function wrt the
-;                   spread
-;       di2dN:      Derivatives of the second intensity function wrt the
-;                   number density
-;       di2dRm:     Derivatives of the second intensity function wrt the
-;                   mean radius
-;       di2dS:      Derivatives of the second intensity function wrt the
-;                   spread
-;                   NB. The values of involving the intensity
-;                   functions are arrays of the same dimension
-;                   as dqv, and are only calculated if dqv is
-;                   specified.
+;     N:          The number density of the particle distribution
+;     Rm:         Median radius of the particle distribution (microns)
+;     S:          The spread of the distribution, such that the stardard
+;                 deviation of ln(r) is ln(S)
+;     Wavenumber: Wavenumber of light, defined as 1/wavelength. A
+;                 positive scalar whos units match those of Rm.
+;     Cm:         Complex refractive index
+;
+; KEYWORD INPUTS:
+;     Dqv:        An array of the cosines of scattering angles at which
+;                 to compute the intensity functions.
+;
+; OUTPUTS:
+;     Bext:       The volume extinction coefficient
+;     Bsca:       The volume scattering coefficient
+;     dBextdN:    Derivative of the extinction coefficient wrt the
+;                 number density
+;     dBextdRm:   Derivative of the extinction coefficient wrt the
+;                 mean radius
+;     dBextdS:    Derivative of the extinction coefficient wrt the
+;                 spread
+;     dBscadN:    Derivative of the scattering coefficient wrt the
+;                 number density
+;     dBscadRm:   Derivative of the scattering coefficient wrt the
+;                 mean radius
+;     dBscadS:    Derivative of the scattering coefficient wrt the
+;                 spread
+;     i1:         The first intensity function - intensity of light
+;                 polarised in the plane perpendicular to the directions
+;                 of inicident light propogation and observation. Only
+;                 caculated if dqv is specified.
+;     i2:         The second intensity function - intensity of light
+;                 polarised in the plane parallel to the directions of
+;                 inicident light propogation and observation. Only
+;                 caculated if dqv is specified.
+;     di1dN:      Derivatives of the first intensity function wrt the
+;                 number density
+;     di1dRm:     Derivatives of the first intensity function wrt the
+;                 mean radius
+;     di1dS:      Derivatives of the first intensity function wrt the
+;                 spread
+;     di2dN:      Derivatives of the second intensity function wrt the
+;                 number density
+;     di2dRm:     Derivatives of the second intensity function wrt the
+;                 mean radius
+;     di2dS:      Derivatives of the second intensity function wrt the
+;                 spread
+;                 NB. The values of involving the intensity functions
+;                 are arrays of the same dimension as dqv, and are only
+;                 calculated if dqv is specified.
+;
+; KEYWORD OUTPUTS:
+;
 ; RESTRICTIONS:
-;       Note, this procedure calls the MIE_SINGLE and QUADRATURE procedures.
-; MODIFICATION HISTORY
-;       G. Thomas Sept. 2003 mie_derivs_ln.pro
+;     Note, this procedure calls the MIE_SINGLE and QUADRATURE
+;     procedures.
 ;
-;       G. Thomas Nov. 2003 minor bug fixes
-;
-;       G. Thomas Feb. 2004 Explicit double precission added
-;       throughout and header updated.
-;       G. Thomas Jun. 2005 Implemented 0.1 step size in X and
-;       trapezium quadrature. Also added npts and info keywords.
+; MODIFICATION HISTORY:
+;     G. Thomas, Sep 2003: mie_derivs_ln.pro
+;     G. Thomas, Nov 2003: minor bug fixes
+;     G. Thomas, Feb 2004: Explicit double precission added throughout
+;         and header updated.
+;     G. Thomas, Jun 2005: Implemented 0.1 step size in X and trapezium
+;         quadrature. Also added npts and info keywords.
+;-
 
     Common miedervln, absc, wght
 

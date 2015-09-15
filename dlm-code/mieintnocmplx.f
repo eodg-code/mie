@@ -1,33 +1,50 @@
 !     General purpose Mie scattering routine for single particles
+!
 !     Author: R Grainger 1990
+!
 !     History:
-!     G Thomas, March 2005: Added calculation of Phase function and
-!     code to ensure correct calculation of backscatter coeficient
-!     G Thomas, November 2006: Calculation of backscatter efficiency 
-!     now done using the A and B values rather than the intensity 
-!     at 180 degrees.
+!       G Thomas, March 2005: Added calculation of Phase function and
+!         code to ensure correct calculation of backscatter coeficient
+!       G Thomas, November 2006: Calculation of backscatter efficiency
+!         now done using the A and B values rather than the intensity at
+!         180 degrees.
+!       G Thomas, July 2012: Removed the maximum size parameter
+!         restriction (Imaxx & Itermax set to 12e6). Also all integers
+!         changed to 32-bit (* 4) to avoid overflow.
+!       G Thomas/D Grainger, 2 Aug 2012: Bug fix in backscatter
+!       calculation
+!       G McGarragh, 29, Jul 2015: Add support to output the 11, 33, 12,
+!         and 34 elements of the 4x4 single scattering phase matrix F,
+!         where F21 = F12 and F43 = -F34, which is all that is required
+!         for randomly oriented spherical particles.  F11 is identical
+!         to the old phase function output DPh.
 
-      Options/Extend_Source
-      Subroutine MieIntNoCmplx(Dx, SCm, Inp, Dqv, Dqxt, Dqsc, Dbsc, Dg, Xs1r, Xs1i, Xs2r, Xs2i, DPh, Error)
+      Subroutine MieIntNoCmplx(Dx, SCm, Inp, Dqv, Dqxt, Dqsc, Dbsc, Dg,
+     &                         Xs1r, Xs1i, Xs2r, Xs2i, F11, F33, F12,
+     &                         F34, Error)
 
-      Integer * 2  Imaxx
+      Implicit None
+
+      Integer * 4  Imaxx
       Parameter (Imaxx = 12000)
-      Real * 4     RIMax          ! largest real part of refractive index
+      Real * 4     RIMax         ! largest real part of refractive index
       Parameter (RIMax = 2.5)
-      Real * 4     IRIMax         ! largest imaginary part of refractive index
+      Real * 4     IRIMax        ! largest imaginary part of refractive index
       Parameter (IRIMax = -2)
-      Integer * 2  Itermax
-      Parameter (Itermax = 12000 * 2.5)
-                                ! must be large enough to cope with the
-                                ! largest possible nmx = x * abs(scm) + 15
-                                ! or nmx =  Dx + 4.05*Dx**(1./3.) + 2.0
-      Integer * 2  Imaxnp
-      Parameter (Imaxnp = 10000)  ! Change this as required
+      Integer * 4  Itermax
+      Parameter (Itermax = 12000000)
+!     Parameter (Itermax = 12000 * 2.5)
+                                 ! must be large enough to cope with the
+                                 ! largest possible nmx = x * abs(scm) + 15
+                                 ! or nmx =  Dx + 4.05*Dx**(1./3.) + 2.0
+      Integer * 4  Imaxnp
+      Parameter (Imaxnp = 10000) ! Change this as required
 *     INPUT
       Real * 8     Dx
-      Complex * 16  SCm
+      Complex * 16 SCm
       Integer * 4  Inp
       Real * 8     Dqv(Inp)
+
 *     OUTPUT
       Real * 8     Xs1r(Inp)
       Real * 8     Xs1i(Inp)
@@ -35,22 +52,28 @@
       Real * 8     Xs2i(Inp)
       Real * 8     Dqxt
       Real * 8     Dqsc
-      Real * 8     Dg
       Real * 8     Dbsc
-      Real * 8     DPh(InP)
+      Real * 8     Dg
+      Real * 8     F11(InP)
+      Real * 8     F33(InP)
+      Real * 8     F12(InP)
+      Real * 8     F34(InP)
       Integer * 4  Error
+
 *     LOCAL
-      Integer * 2  I
-      Integer * 2  NStop
-      Integer * 2  NmX
-      Integer * 4  N    ! N*N > 32767 ie N > 181
+      Integer * 4  I
+      Integer * 4  NStop
+      Integer * 4  NmX
+      Integer * 4  N ! N*N > 32767 ie N > 181
       Integer * 4  Inp2
+      Real * 8     AA, Dx2
       Real * 8     Chi,Chi0,Chi1
       Real * 8     APsi,APsi0,APsi1
       Real * 8     Pi0(Imaxnp)
       Real * 8     Pi1(Imaxnp)
       Real * 8     Taun(Imaxnp)
       Real * 16    Psi,Psi0,Psi1
+      Complex * 16 C1,C2,C3,C4
       Complex * 8  Ir
       Complex * 16 Xs1(InP)
       Complex * 16 Xs2(InP)
@@ -63,9 +86,10 @@
       Complex * 16 Xi,Xi0,Xi1
       Complex * 16 Bscnum
       Complex * 16 Y
+
 *     ACCELERATOR VARIABLES
-      Integer * 2  Tnp1
-      Integer * 2  Tnm1
+      Integer * 4  Tnp1
+      Integer * 4  Tnm1
       Real * 16    Dn
       Real * 8     Rnx
       Real * 8     S(Imaxnp)
@@ -74,7 +98,8 @@
       Real * 8     A2
       Complex * 16 A1
 
-      If ((Dx.Gt.Imaxx) .Or. (InP.Gt.ImaxNP)) Then
+!     If ((Dx.Gt.Imaxx) .Or. (InP.Gt.ImaxNP)) Then
+      If (InP.Gt.ImaxNP) Then
         Error = 1
         Return
       EndIf
@@ -96,7 +121,7 @@
       End If
       NmX = Max(Real(NStop),Real(Abs(Y))) + 15.
       If (Nmx .gt. Itermax) then
-          Error = 1
+          Error = 2
           Return
       End If
       Inp2 = Inp+1
@@ -139,9 +164,10 @@
          B = ((D(N)*Cm+Rnx)*APsi-APsi1) / ((D(N)*Cm+Rnx)*  Xi-  Xi1)
          Dqxt   = Tnp1 *      Dble(A + B)          + Dqxt
          Dqsc   = Tnp1 * (A*Conjg(A) + B*Conjg(B)) + Dqsc
-         Bscnum = Tnp1 * (-1**N) * (B - A)         + Bscnum
+         Bscnum = Tnp1 * (-1)**N * (A - B)         + Bscnum
          If (N.Gt.1) then
-            Dg = Dg + (dN*dN - 1) * Dble(ANM1*Conjg(A) + BNM1 * Conjg(B)) / dN + TNM1 * Dble(ANM1*Conjg(BNM1)) / (dN*dN - dN)
+            Dg = Dg + (dN*dN - 1) * Dble(ANM1*Conjg(A) + BNM1 * Conjg(B)) /
+     &           dN + TNM1 * Dble(ANM1*Conjg(BNM1)) / (dN*dN - dN)
          End If
          Anm1 = A
          Bnm1 = B
@@ -167,14 +193,23 @@
          Chi1 = Chi
          Xi1 = Dcmplx(APsi1,Chi1)
       End Do
-      If (Dg .GT.0) Dg = 2 * Dg / Dqsc
-      Dqsc =  2 * Dqsc / Dx**2
-      Dqxt =  2 * Dqxt / Dx**2
-      Dbsc =  Dble(Bscnum*Conjg(Bscnum)) / Dx**2
+      If (Dg.GT.0) Dg = 2 * Dg / Dqsc
+      Dx2 = Dx**2
+      Dqsc =  2 * Dqsc / Dx2
+      Dqxt =  2 * Dqxt / Dx2
+      Dbsc =  Dble(Bscnum*Conjg(Bscnum)) / Dx2
+      AA = 2 / (Dx2 * Dqsc)
       Do I = 1,Inp
          Xs1(I) = (Sp(I)+Sm(I)) / 2
          Xs2(I) = (Sp(I)-Sm(I)) / 2
-         Dph(I) = 2 * Dble(Xs1(I)*Conjg(Xs1(I)) + Xs2(I)*Conjg(Xs2(I))) / (Dx**2 * Dqsc)
+         C1 = Xs1(I)*Conjg(Xs1(I))
+         C2 = Xs1(I)*Conjg(Xs2(I))
+         C3 = Xs2(I)*Conjg(Xs2(I))
+         C4 = Xs2(I)*Conjg(Xs1(I))
+         F11(I) =  AA * Dble( C1 + C3)
+         F33(I) =  AA * Dble( C2 + C4)
+         F12(I) = -AA * Dble( C1 - C3)
+         F34(I) = -AA * Dble((C2 - C4) * CMPLX(0., 1.))
          Xs1r(I) = Real(Xs1(I))
          Xs1i(I) = AImag(Xs1(I))
          Xs2r(I) = Real(Xs2(I))

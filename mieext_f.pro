@@ -1,4 +1,5 @@
 Pro mieext_f, NPts, Dx, Cm, Dqxt, Dqsc, Dg
+
 ; Multi architecture Mie routine.
 ; INPUT
 ; Npts I4       number of values of the size parameter (X)
@@ -10,9 +11,9 @@ Pro mieext_f, NPts, Dx, Cm, Dqxt, Dqsc, Dg
 ; Dg   R8(Npts) vector of asymmetry parameter
 
   Case !Version.arch of
-   'x86'  : status = CALL_EXTERNAL('/home/crun/eodg/idl/mie/mieext_x86.so'  , 'mieextidl_', Npts, Dx, Cm, Dqxt, Dqsc, Dg) 
+   'x86'  : status = CALL_EXTERNAL('/home/crun/eodg/idl/mie/mieext_x86.so'  , 'mieextidl_', Npts, Dx, Cm, Dqxt, Dqsc, Dg)
    'alpha': status = CALL_EXTERNAL('/home/crun/eodg/idl/mie/mieext_alpha.so', 'mieextidl_', Npts, Dx, Cm, Dqxt, Dqsc, Dg)
    Else: Mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
-  EndCase   
+  EndCase
 
 END

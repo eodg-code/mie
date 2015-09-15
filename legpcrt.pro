@@ -6,13 +6,12 @@ Pro legpcrt,Inlc,lc,Inp,qv,phase
 ;  qv=cos(angles)
 ;  phase=recomputed phase function
 
-;    Imaxnp = 1100
-     Imaxnp = 20000
+;   Imaxnp = 1100
+    Imaxnp = 20000
     phase=dblarr(Inp)
     lpn=dblarr(Imaxnp)
     lpmn1=dblarr(Imaxnp)
     lpmn2=dblarr(Imaxnp)
-
 
     for i=0,Inp-1 do begin
 
@@ -30,5 +29,6 @@ Pro legpcrt,Inlc,lc,Inp,qv,phase
             lpmn1(i)=lpn(i)
         endfor
     endfor
-return
+
+    return
 end
