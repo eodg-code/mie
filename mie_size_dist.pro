@@ -134,34 +134,33 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
     Tq = gauss_cvf(0.999D0)
 
     if distname eq 'gamma' then begin
-       Rl = params[2]
-       Ru = params[3]
+        Rl = params[2]
+        Ru = params[3]
     endif else if distname eq 'lognormal' then begin
-       Rl = exp(alog(params[0])+Tq*alog(params[1]))
-       Ru = exp(alog(params[0])-Tq*alog(params[1])+alog(4))
+        Rl = exp(alog(params[0])+Tq*alog(params[1]))
+        Ru = exp(alog(params[0])-Tq*alog(params[1])+alog(4))
     endif else begin
-       message,'Invalid size distribution name: ' + distname
+        message,'Invalid size distribution name: ' + distname
     endelse
 
     if 2D0 * !dpi * Rl * Wavenumber ge ru_max then message,'Lower bound of ' + $
-       'integral is larger than maximum permitted size parameter.'
+        'integral is larger than maximum permitted size parameter.'
     if 2D0 * !dpi * Ru * Wavenumber ge ru_max then begin
         Ru = (ru_max - 1d0) / ( 2D0 * !dpi * Wavenumber )
         message,/continue,'Warning: Radius upper bound truncated to avoid '  + $
-           'size parameter overflow.'
+            'size parameter overflow.'
     endif
 
-  if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
-    message, /continue,'Warning: Imaginary part of refractive index '+$
-             'should be negative for absorbing particles. '+$
-             'Set /silent to hide this message.'
+    if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
+        message, /continue,'Warning: Imaginary part of refractive index '+$
+            'should be negative for absorbing particles. '+$
+            'Set /silent to hide this message.'
 
     if not keyword_set(xres) then xres = 0.1
 
     if not keyword_set(npts) then begin
-;      Accurate calulation requires 0.1 step size in x
-
-       Npts = (Long(2D0 * !dpi * (ru-rl) * Wavenumber/xres)) > 200
+;       Accurate calulation requires 0.1 step size in x
+        Npts = (Long(2D0 * !dpi * (ru-rl) * Wavenumber/xres)) > 200
     endif
 
 ;   quadrature on the radii
@@ -170,11 +169,11 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
     shift_quadrature,absc,wght,Rl,Ru,R,W1
 
     if distname eq 'gamma' then begin
-       W1P = W1 * Nd[0] * R^((1. - 3. * params[1]) / params[1]) * $
-             exp(-R / (params[0] * params[1]))
+        W1P = W1 * Nd[0] * R^((1. - 3. * params[1]) / params[1]) * $
+              exp(-R / (params[0] * params[1]))
     endif else if distname eq 'lognormal' then begin
-       W1P = W1 * Nd[0] / (sqrt(2D0) * sqrt(!dpi) * R * ALOG(params[1])) * $
-             EXP(-0.5D0*(ALOG(R/params[0]) / ALOG(params[1]))^2)
+        W1P = W1 * Nd[0] / (sqrt(2D0) * sqrt(!dpi) * R * ALOG(params[1])) * $
+              EXP(-0.5D0*(ALOG(R/params[0]) / ALOG(params[1]))^2)
     endif
 
     Dx = 2D0 * !dpi * R * Wavenumber
@@ -188,47 +187,47 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
         Inp = n_elements(Dqv)
         SPM = dblarr(4,Inp)
         if keyword_set(dlm) then begin
-;          Put the mthread keyword into the right form for the DLM call...
-           if n_elements(mthread) gt 0 then begin
-              if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
-              else mthrd = mthread
-           endif else mthrd = 1
-           DCm = dcomplex(Cm) ; Ensure the inputs are double precision
-           DDqv = double(Dqv)
-           Mie_dlm_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
-                           Xs1, Xs2, F11, F33, F12, F34 ;, mthread=mthrd
-           DSPM = dblarr(4,Inp,Npts)
-           DSPM[0,*,*] = F11
-           DSPM[1,*,*] = F33
-           DSPM[2,*,*] = F12
-           DSPM[3,*,*] = F34
-;          Mie_dlm_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
-;                          Xs1, Xs2 ;, mthread=mthrd
-;          Cannot get the DLM to return the phase matrix. Very misterious...
-;          So must calculate the elements of DSPM below.
-;          DSPM = dblarr(4,Inp,Npts)
-;          AA = 2d0 / (Dx^2 * Dqsc)
-;          for i = 0,Inp-1 do begin
-;             DSPM[0,i,*] =  AA * double( Xs1[i,*]*CONJ(Xs1[i,*]) + $
-;                                         Xs2[i,*]*CONJ(Xs2[i,*]))
-;             DSPM[1,i,*] =  AA * double( Xs1[i,*]*CONJ(Xs2[i,*]) + $
-;                                         Xs2[i,*]*CONJ(Xs1[i,*]))
-;             DSPM[2,i,*] = -AA * double( Xs1[i,*]*CONJ(Xs1[i,*]) - $
-;                                         Xs2[i,*]*CONJ(Xs2[i,*]))
-;             DSPM[3,i,*] = -AA * double((Xs1[i,*]*CONJ(Xs2[i,*]) - $
-;                                         Xs2[i,*]*CONJ(Xs1[i,*])) * $
-;                                 complex(0.0d, 1.0d))
-;          endfor
+;           Put the mthread keyword into the right form for the DLM call...
+            if n_elements(mthread) gt 0 then begin
+                if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
+                else mthrd = mthread
+            endif else mthrd = 1
+            DCm = dcomplex(Cm) ; Ensure the inputs are double precision
+            DDqv = double(Dqv)
+            Mie_dlm_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
+                            Xs1, Xs2, F11, F33, F12, F34 ;, mthread=mthrd
+            DSPM = dblarr(4,Inp,Npts)
+            DSPM[0,*,*] = F11
+            DSPM[1,*,*] = F33
+            DSPM[2,*,*] = F12
+            DSPM[3,*,*] = F34
+;           Mie_dlm_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
+;                           Xs1, Xs2 ;, mthread=mthrd
+;           Cannot get the DLM to return the phase matrix. Very misterious...
+;           So must calculate the elements of DSPM below.
+;           DSPM = dblarr(4,Inp,Npts)
+;           AA = 2d0 / (Dx^2 * Dqsc)
+;           for i = 0,Inp-1 do begin
+;               DSPM[0,i,*] =  AA * double( Xs1[i,*]*CONJ(Xs1[i,*]) + $
+;                                           Xs2[i,*]*CONJ(Xs2[i,*]))
+;               DSPM[1,i,*] =  AA * double( Xs1[i,*]*CONJ(Xs2[i,*]) + $
+;                                           Xs2[i,*]*CONJ(Xs1[i,*]))
+;               DSPM[2,i,*] = -AA * double( Xs1[i,*]*CONJ(Xs1[i,*]) - $
+;                                           Xs2[i,*]*CONJ(Xs2[i,*]))
+;               DSPM[3,i,*] = -AA * double((Xs1[i,*]*CONJ(Xs2[i,*]) - $
+;                                           Xs2[i,*]*CONJ(Xs1[i,*])) * $
+;                                   complex(0.0d, 1.0d))
+;           endfor
         endif else begin
-;          Put the mthread keyword into the right form for the DLM call...
-           if n_elements(mthread) gt 0 then begin
-              if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
-              else mthrd = mthread
-           endif else mthrd = 1
-           DCm = dcomplex(Cm)   ; Ensure the inputs are double precision
-           DDqv = double(Dqv)
-           Mie_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
-                       Xs1, Xs2, DSPM ;, mthread=mthrd
+;           Put the mthread keyword into the right form for the DLM call...
+            if n_elements(mthread) gt 0 then begin
+                if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
+                else mthrd = mthread
+            endif else mthrd = 1
+            DCm = dcomplex(Cm)   ; Ensure the inputs are double precision
+            DDqv = double(Dqv)
+            Mie_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
+                        Xs1, Xs2, DSPM ;, mthread=mthrd
         endelse
     endif else begin
         inp = 1
@@ -250,12 +249,12 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
     Bbac = total(W1PA * DQbk)
 
     if n_elements(Dqv) gt 0 then begin
-      for i = 0,Inp-1 do begin
-        SPM[0,i] = total(W1PA * DSPM[0,i,*] * Dqsc) / Bsca
-        SPM[1,i] = total(W1PA * DSPM[1,i,*] * Dqsc) / Bsca
-        SPM[2,i] = total(W1PA * DSPM[2,i,*] * Dqsc) / Bsca
-        SPM[3,i] = total(W1PA * DSPM[3,i,*] * Dqsc) / Bsca
-      endfor
+        for i = 0,Inp-1 do begin
+            SPM[0,i] = total(W1PA * DSPM[0,i,*] * Dqsc) / Bsca
+            SPM[1,i] = total(W1PA * DSPM[1,i,*] * Dqsc) / Bsca
+            SPM[2,i] = total(W1PA * DSPM[2,i,*] * Dqsc) / Bsca
+            SPM[3,i] = total(W1PA * DSPM[3,i,*] * Dqsc) / Bsca
+        endfor
     endif
 
     if n_elements(Gavg) then Gavg = total(W1PA)

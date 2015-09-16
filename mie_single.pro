@@ -60,7 +60,8 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 ;       SPM:      The scattering phase matrix elements F11 (SPM[0,*,*]),
 ;                 F33 (SPM[1,*,*]), F12 (SPM[2,*,*]), F34 (SPM[3,*,*]),
 ;                 where the 2nd dimentsion is the same dimension as
-;                 Dqv.  Also only calculated if Dqv is specified.
+;                 Dqv and the 3rd dimension is the same dimension as Dx.
+;                 Also only calculated if Dqv is specified.
 ;
 ; KEYWORD OUTPUTS:
 ;
@@ -103,193 +104,191 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 ;         fixed so no need to calculate it here any more.)
 ;-
 
-  Imaxx = 120000l
-  RIMax = 2.5
-  Itermax = long(Imaxx * RIMax)
-  Imaxnp = 10000l     ; Change this as required
-  Sizes = N_Elements(Dx)
+    Imaxx = 120000l
+    RIMax = 2.5
+    Itermax = long(Imaxx * RIMax)
+    Imaxnp = 10000l ; Change this as required
+    Sizes = N_Elements(Dx)
 
-  if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
-    message, /continue,'Warning: Imaginary part of refractive index '+ $
-             'should be negative for absorbing particles. '+ $
-             'Set /silent to hide this message.'
+    if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
+        message, /continue, 'Warning: Imaginary part of refractive index '+ $
+            'should be negative for absorbing particles. '+ $
+            'Set /silent to hide this message.'
 
-  IF KEYWORD_SET(dlm) THEN BEGIN
-; If the dlm keyword is set, use the DLM version of the code
-  DxArr = dblarr(Sizes)
-  DxArr[*] = Dx
-  DCm = dcomplex(Cm)
+    IF KEYWORD_SET(dlm) THEN BEGIN
+;   If the dlm keyword is set, use the DLM version of the code
+    DxArr = dblarr(Sizes)
+    DxArr[*] = Dx
+    DCm = dcomplex(Cm)
 
-; Put the mthread keyword into the right form for the DLM call...
-  if n_elements(mthread) gt 0 then begin
-     if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
-     else mthrd = mthread
-  endif else mthrd = 1
+;   Put the mthread keyword into the right form for the DLM call...
+    if n_elements(mthread) gt 0 then begin
+        if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
+        else mthrd = mthread
+    endif else mthrd = 1
 
-  IF KEYWORD_SET(dqv) THEN BEGIN
-     Inp = n_elements(dqv)
-     mie_dlm_single, DxArr, DCm, dqv=double(dqv), Dqxt, Dqsc, Dqbk, $
+    IF KEYWORD_SET(dqv) THEN BEGIN
+        Inp = n_elements(dqv)
+        mie_dlm_single, DxArr, DCm, dqv=double(dqv), Dqxt, Dqsc, Dqbk, $
                      Dg, Xs1, Xs2, F11, F33, F12, F34; , mthread=mthrd
-;    Cannot get the DLM to return the phase function. Very mysterious...
-;    So must calculate the elements of SPM below.
-     SPM = dblarr(4,Inp,Sizes)
-     for i = 0,Sizes-1 do begin
-        AA = 2d0 / (DxArr[i]^2 * Dqsc[i])
-        SPM[0,*,*] = F11
-        SPM[1,*,*] = F33
-        SPM[2,*,*] = F12
-        SPM[3,*,*] = F34
-     endfor
-;    mie_dlm_single, DxArr, DCm, dqv=double(dqv), Dqxt, Dqsc, Dqbk, $
+        SPM = dblarr(4,Inp,Sizes)
+        for i = 0,Sizes-1 do begin
+            AA = 2d0 / (DxArr[i]^2 * Dqsc[i])
+            SPM[0,*,*] = F11
+            SPM[1,*,*] = F33
+            SPM[2,*,*] = F12
+            SPM[3,*,*] = F34
+        endfor
+
+;       mie_dlm_single, DxArr, DCm, dqv=double(dqv), Dqxt, Dqsc, Dqbk, $
 ;                    Dg, Xs1, Xs2, mthread=mthrd
-;    Cannot get the DLM to return the phase function. Very mysterious...
-;    So must calculate the elements of SPM below.
-;    SPM = dblarr(4,Inp,Sizes)
-;    for i = 0,Sizes-1 do begin
-;       AA = 2d0 / (DxArr[i]^2 * Dqsc[i])
-;       SPM[0,*,i] =  AA * double(Xs1[*,i]*CONJ(Xs1[*,i]) + $
-;                                 Xs2[*,i]*CONJ(Xs2[*,i]))
-;       SPM[1,*,i] =  AA * double(Xs1[*,i]*CONJ(Xs2[*,i]) + $
-;                                 Xs2[*,i]*CONJ(Xs1[*,i]))
-;       SPM[2,*,i] = -AA * double(Xs1[*,i]*CONJ(Xs1[*,i]) - $
-;                                 Xs2[*,i]*CONJ(Xs2[*,i]))
-;       SPM[3,*,i] = -AA * double((Xs1[*,i]*CONJ(Xs2[*,i]) - $
-;                                  Xs2[*,i]*CONJ(Xs1[*,i])) * $
-;                                  complex(0.0d, 1.0d))
-;    endfor
-  ENDIF ELSE BEGIN
-      mie_dlm_single, DxArr, DCm, Dqxt, Dqsc, Dqbk, Dg;, mthread=mthrd
-  ENDELSE
+;       Cannot get the DLM to return the phase function. Very mysterious...
+;       So must calculate the elements of SPM below.
+;       SPM = dblarr(4,Inp,Sizes)
+;       for i = 0,Sizes-1 do begin
+;           AA = 2d0 / (DxArr[i]^2 * Dqsc[i])
+;           SPM[0,*,i] =  AA * double(Xs1[*,i]*CONJ(Xs1[*,i]) + $
+;                                     Xs2[*,i]*CONJ(Xs2[*,i]))
+;           SPM[1,*,i] =  AA * double(Xs1[*,i]*CONJ(Xs2[*,i]) + $
+;                                     Xs2[*,i]*CONJ(Xs1[*,i]))
+;           SPM[2,*,i] = -AA * double(Xs1[*,i]*CONJ(Xs1[*,i]) - $
+;                                     Xs2[*,i]*CONJ(Xs2[*,i]))
+;           SPM[3,*,i] = -AA * double((Xs1[*,i]*CONJ(Xs2[*,i]) - $
+;                                      Xs2[*,i]*CONJ(Xs1[*,i])) * $
+;                                      complex(0.0d, 1.0d))
+;       endfor
+    ENDIF ELSE BEGIN
+        mie_dlm_single, DxArr, DCm, Dqxt, Dqsc, Dqbk, Dg;, mthread=mthrd
+    ENDELSE
 
-  ENDIF ELSE BEGIN ;No DLM? Do everything in IDL
+    ENDIF ELSE BEGIN ;No DLM? Do everything in IDL
 
-  if KEYWORD_SET(dqv) then begin
-     tmp = where(dqv eq -1.0,bktheta)
-     if bktheta eq 0 then dqv2 = [dqv,-1d] else dqv2 = dqv
-     Inp  = n_elements(dqv)
-     Inp2 = n_elements(dqv2)
-     ph = dblarr(Inp)
-     Xs1 = ComplexArr(Inp,Sizes)
-     Xs2 = ComplexArr(Inp,Sizes)
-     SPM = Dblarr(4,Inp,Sizes)
-  endif else begin
-      Inp = 1
-      Inp2 = Inp
-      Dqv = [-1d0]
-      Dqv2 = Dqv
-  endelse
+    if KEYWORD_SET(dqv) then begin
+        tmp = where(dqv eq -1.0,bktheta)
+        if bktheta eq 0 then dqv2 = [dqv,-1d] else dqv2 = dqv
+        Inp  = n_elements(dqv)
+        Inp2 = n_elements(dqv2)
+        ph = dblarr(Inp)
+        Xs1 = ComplexArr(Inp,Sizes)
+        Xs2 = ComplexArr(Inp,Sizes)
+        SPM = Dblarr(4,Inp,Sizes)
+    endif else begin
+        Inp = 1
+        Inp2 = Inp
+        Dqv = [-1d0]
+        Dqv2 = Dqv
+    endelse
 
-  Dqxt = Dblarr(Sizes)
-  Dqsc = Dblarr(Sizes)
-  Dqbk = DComplexArr(Sizes)
-  Dg = Dblarr(Sizes)
+    Dqxt = Dblarr(Sizes)
+    Dqsc = Dblarr(Sizes)
+    Dqbk = DComplexArr(Sizes)
+    Dg = Dblarr(Sizes)
 
-  For Size = 0l, Sizes - 1 Do Begin
+    For Size = 0l, Sizes - 1 Do Begin
 
-;   IF (Dx(Size) GT Imaxx) THEN $
-;      MESSAGE, 'Error: Size Parameter Overflow in Mie'
-    Ir = 1.D0 / Cm
-    Y =  Dx(Size) * Cm
+;       IF (Dx(Size) GT Imaxx) THEN $
+;           MESSAGE, 'Error: Size Parameter Overflow in Mie'
+        Ir = 1.D0 / Cm
+        Y =  Dx(Size) * Cm
 
-    IF (Dx(Size) LT 0.02) THEN  NStop = 2 ELSE BEGIN
-      CASE 1 OF
-        (Dx(Size) LE 8.0)    : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
-        (Dx(Size) LT 4200.0) : NStop = Dx(Size) + 4.05*Dx(Size)^(1./3.) + 2.0
-        ELSE                 : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
-      ENDCASE
-    END
-    NmX = LONG(MAX([NStop,ABS(Y)]) + 15.)
-    D = DCOMPLEXARR(Nmx+1)
+        IF (Dx(Size) LT 0.02) THEN NStop = 2 ELSE BEGIN
+            CASE 1 OF
+                (Dx(Size) LE 8.0)    : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
+                (Dx(Size) LT 4200.0) : NStop = Dx(Size) + 4.05*Dx(Size)^(1./3.) + 2.0
+                ELSE                 : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
+            ENDCASE
+        END
+        NmX = LONG(MAX([NStop,ABS(Y)]) + 15.)
+        D = DCOMPLEXARR(Nmx+1)
 
-    FOR N = Nmx-1,1,-1 DO BEGIN
-      A1 = (N+1) / Y
-      D(N) = A1 - 1/(A1+D(N+1))
-    END
+        FOR N = Nmx-1,1,-1 DO BEGIN
+            A1 = (N+1) / Y
+            D(N) = A1 - 1/(A1+D(N+1))
+        END
 
-    Sm = DCOMPLEXARR(Inp2)
-    Sp = DCOMPLEXARR(Inp2)
-    Pi0 = DCOMPLEXARR(Inp2)
-    Pi1 = DCOMPLEX(REPLICATE(1.D0,Inp2),REPLICATE(0.D0,Inp2))
+        Sm = DCOMPLEXARR(Inp2)
+        Sp = DCOMPLEXARR(Inp2)
+        Pi0 = DCOMPLEXARR(Inp2)
+        Pi1 = DCOMPLEX(REPLICATE(1.D0,Inp2),REPLICATE(0.D0,Inp2))
 
-    Psi0 = Cos(Dx(Size))
-    Psi1 = Sin(Dx(Size))
-    Chi0 =-Sin(Dx(Size))
-    Chi1 = Cos(Dx(Size))
-    Xi0 = DCOMPLEX(Psi0,Chi0)
-    Xi1 = DCOMPLEX(Psi1,Chi1)
+        Psi0 = Cos(Dx(Size))
+        Psi1 = Sin(Dx(Size))
+        Chi0 =-Sin(Dx(Size))
+        Chi1 = Cos(Dx(Size))
+        Xi0 = DCOMPLEX(Psi0,Chi0)
+        Xi1 = DCOMPLEX(Psi1,Chi1)
 
-    Dg(Size) = 0.D0
-    Dqsc(Size) = 0.D0
-    Dqxt(Size) = 0.D0
-    Dqbk(Size) = 0.D0
-    Tnp1 = 1D0
+        Dg(Size) = 0.D0
+        Dqsc(Size) = 0.D0
+        Dqxt(Size) = 0.D0
+        Dqbk(Size) = 0.D0
+        Tnp1 = 1D0
 
-    FOR N = 1l,Nstop DO BEGIN
-      DN = Double(N)
-      Tnp1 = Tnp1 + 2D0
-      Tnm1 = Tnp1 - 2D0
-      A2 = Tnp1 / (DN*(DN+1.D0))
-      Turbo = (DN+1.D0) / DN
-      Rnx = DN/Dx(Size)
-      Psi = DOUBLE(Tnm1)*Psi1/Dx(Size) - Psi0
-      Chi = Tnm1*Chi1/Dx(Size)       - Chi0
-      Xi = DCOMPLEX(Psi,Chi)
-      A = ((D[N]*Ir+Rnx)*Psi-Psi1) / ((D[N]*Ir+Rnx)*  Xi-  Xi1)
-      B = ((D[N]*Cm+Rnx)*Psi-Psi1) / ((D[N]*Cm+Rnx)*  Xi-  Xi1)
-      Dqxt(Size) = Tnp1 * DOUBLE(A + B)                 + Dqxt(Size)
-      Dqsc(Size) = Tnp1 * DOUBLE(A*CONJ(A) + B*CONJ(B)) + Dqsc(Size)
-      IF (N GT 1) THEN Dg(Size) = Dg(Size) $
-                + (dN*dN - 1) * DOUBLE(ANM1*CONJ(A) + BNM1 * CONJ(B)) / dN $
-                + TNM1 * DOUBLE(ANM1*CONJ(BNM1)) / (dN*dN - dN)
-      Anm1 = A
-      Bnm1 = B
+        FOR N = 1l,NStop DO BEGIN
+            DN = Double(N)
+            Tnp1 = Tnp1 + 2D0
+            Tnm1 = Tnp1 - 2D0
+            A2 = Tnp1 / (DN*(DN+1.D0))
+            Turbo = (DN+1.D0) / DN
+            Rnx = DN/Dx(Size)
+            Psi = DOUBLE(Tnm1)*Psi1/Dx(Size) - Psi0
+            Chi = Tnm1*Chi1/Dx(Size)       - Chi0
+            Xi = DCOMPLEX(Psi,Chi)
+            A = ((D[N]*Ir+Rnx)*Psi-Psi1) / ((D[N]*Ir+Rnx)*  Xi-  Xi1)
+            B = ((D[N]*Cm+Rnx)*Psi-Psi1) / ((D[N]*Cm+Rnx)*  Xi-  Xi1)
+            Dqxt(Size) = Tnp1 * DOUBLE(A + B)                 + Dqxt(Size)
+            Dqsc(Size) = Tnp1 * DOUBLE(A*CONJ(A) + B*CONJ(B)) + Dqsc(Size)
+            IF (N GT 1) THEN Dg(Size) = Dg(Size) $
+                      + (dN*dN - 1) * DOUBLE(ANM1*CONJ(A) + BNM1 * CONJ(B)) / dN $
+                      + TNM1 * DOUBLE(ANM1*CONJ(BNM1)) / (dN*dN - dN)
+            Anm1 = A
+            Bnm1 = B
 
+            S = Dqv2 * Pi1
+            T = S - Pi0
+            if arg_present(Dqbk) or n_elements(dph) gt 0 then begin
+               Taun = N*T - Pi0
+               Sp = (A2 * (A + B)) * (Pi1 + Taun) + Sp
+               Sm = (A2 * (A - B)) * (Pi1 - Taun) + Sm
+            endif
+            Pi0 = Pi1
+            Pi1 = S + T*Turbo
 
-      S = Dqv2 * Pi1
-      T = S - Pi0
-      if arg_present(Dqbk) or n_elements(dph) gt 0 then begin
-         Taun = N*T - Pi0
-         Sp = (A2 * (A + B)) * (Pi1 + Taun) + Sp
-         Sm = (A2 * (A - B)) * (Pi1 - Taun) + Sm
-      endif
-      Pi0 = Pi1
-      Pi1 = S + T*Turbo
+            Psi0 = Psi1
+            Psi1 = Psi
+            Chi0 = Chi1
+            Chi1 = Chi
+            Xi1 = DCOMPLEX(Psi1,Chi1)
 
-      Psi0 = Psi1
-      Psi1 = Psi
-      Chi0 = Chi1
-      Chi1 = Chi
-      Xi1 = DCOMPLEX(Psi1,Chi1)
+        END; For NStop
 
-    END; For Nstop
+        IF (Dg(Size) GT 0) THEN Dg(Size) = 2D0 * Dg(Size) / Dqsc(Size)
 
-    IF (Dg(Size) GT 0) THEN Dg(Size) = 2D0 * Dg(Size) / Dqsc(Size)
-;   The following lines are not needed unless dqv was set
-    IF n_elements(dqv) gt 0 THEN BEGIN
-        Xs1[*,Size] = ((Sp[0:Inp-1] + Sm[0:Inp-1]) / 2D0)
-        Xs2[*,Size] = ((Sp[0:Inp-1] - Sm[0:Inp-1]) / 2D0)
-        SPM[0,*,Size] =  double(Xs1[*,Size]*CONJ(Xs1[*,Size]) + $
-                                Xs2[*,Size]*CONJ(Xs2[*,Size])) / Dqsc(Size)
-        SPM[1,*,Size] =  double(Xs1[*,Size]*CONJ(Xs2[*,Size]) + $
-                                Xs2[*,Size]*CONJ(Xs1[*,Size])) / Dqsc(Size)
-        SPM[2,*,Size] = -double(Xs1[*,Size]*CONJ(Xs1[*,Size]) - $
-                                Xs2[*,Size]*CONJ(Xs2[*,Size])) / Dqsc(Size)
-        SPM[3,*,Size] = -double((Xs1[*,Size]*CONJ(Xs2[*,Size]) - $
-                                 Xs2[*,Size]*CONJ(Xs1[*,Size])) * $
-                                          complex(0.0d, 1.0d)) / Dqsc(Size)
-    ENDIF
+;       The following lines are not needed unless dqv was set
+        IF n_elements(dqv) gt 0 THEN BEGIN
+            Xs1[*,Size] = ((Sp[0:Inp-1] + Sm[0:Inp-1]) / 2D0)
+            Xs2[*,Size] = ((Sp[0:Inp-1] - Sm[0:Inp-1]) / 2D0)
+            SPM[0,*,Size] =  double(Xs1[*,Size]*CONJ(Xs1[*,Size]) + $
+                                    Xs2[*,Size]*CONJ(Xs2[*,Size])) / Dqsc(Size)
+            SPM[1,*,Size] =  double(Xs1[*,Size]*CONJ(Xs2[*,Size]) + $
+                                    Xs2[*,Size]*CONJ(Xs1[*,Size])) / Dqsc(Size)
+            SPM[2,*,Size] = -double(Xs1[*,Size]*CONJ(Xs1[*,Size]) - $
+                                    Xs2[*,Size]*CONJ(Xs2[*,Size])) / Dqsc(Size)
+            SPM[3,*,Size] = -double((Xs1[*,Size]*CONJ(Xs2[*,Size]) - $
+                                     Xs2[*,Size]*CONJ(Xs1[*,Size])) * $
+                                              complex(0.0d, 1.0d)) / Dqsc(Size)
+        ENDIF
 
+        if arg_present(Dqbk) then $
+            Dqbk(Size) = ( Sp[Inp2-1] + Sm[Inp2-1] ) / 2d0
+
+    EndFor ; END of size loop
+
+    Dqsc =  2D0 * Dqsc / Dx^2
+    Dqxt =  2D0 * Dqxt / Dx^2
     if arg_present(Dqbk) then $
-       Dqbk(Size) = ( Sp[Inp2-1] + Sm[Inp2-1] ) / 2d0
+        Dqbk =  4d0* DOUBLE(Dqbk*CONJ(Dqbk)) / Dx^2
 
-  EndFor ; END of size loop
-
-  Dqsc =  2D0 * Dqsc / Dx^2
-  Dqxt =  2D0 * Dqxt / Dx^2
-  if arg_present(Dqbk) then $
-     Dqbk =  4d0* DOUBLE(Dqbk*CONJ(Dqbk)) / Dx^2
-
-
-  ENDELSE ; END of if DLM keyword
+    ENDELSE ; END of if DLM keyword
 
 End

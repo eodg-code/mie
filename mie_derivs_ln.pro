@@ -103,8 +103,7 @@
     endif
 
     if not keyword_set(npts) then begin
-;   Accurate calulation requires 0.1 step size in x
-
+;      Accurate calulation requires 0.1 step size in x
        Npts = (Long(2D0 * !dpi * (ru-rl) * Wavenumber/0.1)) > 200
     endif
 
@@ -122,58 +121,58 @@
                                        MinSize : Dx[0], $
                                        MaxSize : Dx[Npts-1] }
 
-;  Create Mie variables
-   Dqxt=DBLARR(npts)
-   Dqsc=DBLARR(npts)
+;   Create Mie variables
+    Dqxt=DBLARR(npts)
+    Dqsc=DBLARR(npts)
 
-   Dx = 2d0 * !dpi * R * Wavenumber
-;  If an array of cos(theta) is provided, calculate phase function
-   if n_elements(dqv) gt 0 then begin
-       Inp = n_elements(dqv)
-       i1 = dblarr(Inp) & i2 = i1
-       di1dN = i1 &  di2dN = i1
-       di1dRm = i1 & di2dRm = i1
-       di1dS = i1 & di2dS = i1
-       Mie_single, Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,Dph
-   endif else begin
-       inp = 1
-       dqv = 1d0
-       Mie_single, Dx,Cm,Dqxt,Dqsc,Dqbk,Dg
-   endelse
+    Dx = 2d0 * !dpi * R * Wavenumber
+;   If an array of cos(theta) is provided, calculate phase function
+    if n_elements(dqv) gt 0 then begin
+        Inp = n_elements(dqv)
+        i1 = dblarr(Inp) & i2 = i1
+        di1dN = i1 &  di2dN = i1
+        di1dRm = i1 & di2dRm = i1
+        di1dS = i1 & di2dS = i1
+        Mie_single, Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,Dph
+    endif else begin
+        inp = 1
+        dqv = 1d0
+        Mie_single, Dx,Cm,Dqxt,Dqsc,Dqbk,Dg
+    endelse
 
-   lnRRm = ALOG(R/Rm) ;Precalculate for speed
+    lnRRm = ALOG(R/Rm) ;Precalculate for speed
 
-   Bext = Total(wghtr * W1 * DQxt * !dpi * R^2) ;Extinction
-   dBextdN = Bext / N
-   dBextdRm = Total(wghtr * W1 * DQxt * lnRRm * !dpi * R^2) / (alog(S)^2 * Rm)
-   dBextdS = (Total(wghtr * W1 * DQxt * lnRRm^2 * !dpi * R^2) / alog(S)^2 $
-              - Total(wghtr * W1 * DQxt * !dpi * R^2)) / (S * alog(S))
+    Bext = Total(wghtr * W1 * DQxt * !dpi * R^2) ; Extinction
+    dBextdN = Bext / N
+    dBextdRm = Total(wghtr * W1 * DQxt * lnRRm * !dpi * R^2) / (alog(S)^2 * Rm)
+    dBextdS = (Total(wghtr * W1 * DQxt * lnRRm^2 * !dpi * R^2) / alog(S)^2 $
+             - Total(wghtr * W1 * DQxt * !dpi * R^2)) / (S * alog(S))
 
-   Bsca = Total(wghtr * W1 * DQsc * !dpi * R^2) ;Scattering
-   dBscadN = Total(wghtr * W1 * DQsc * !dpi * R^2) / N
-   dBscadRm = Total(wghtr * W1 * DQsc * lnRRm * !dpi * R^2) / (alog(S)^2 * Rm)
-   dBscadS = Total(wghtr * W1 * DQsc * lnRRm^2 * !dpi * R^2) / (S * alog(S)^3) $
-              - Total(wghtr * W1 * DQsc * !dpi * R^2) / (S * alog(S))
+    Bsca = Total(wghtr * W1 * DQsc * !dpi * R^2) ;Scattering
+    dBscadN = Total(wghtr * W1 * DQsc * !dpi * R^2) / N
+    dBscadRm = Total(wghtr * W1 * DQsc * lnRRm * !dpi * R^2) / (alog(S)^2 * Rm)
+    dBscadS = Total(wghtr * W1 * DQsc * lnRRm^2 * !dpi * R^2) / (S * alog(S)^3) $
+            - Total(wghtr * W1 * DQsc * !dpi * R^2) / (S * alog(S))
 
-   if n_elements(i1) gt 0 then $       ;Intensity functions
-     for i =0,Inp-1 do begin
-       i1(i) = Total(wghtr * W1 * real_part(Xs1(i,*)*conj(Xs1(i,*))))
-       di1dN(i) = i1(i) / N
-       di1dRm(i) = Total(wghtr * W1 * lnRRm * real_part(Xs1(i,*)*conj(Xs1(i,*)))) $
-                   / (alog(S)^2 * Rm)
-       di1dS(i) = Total(wghtr * W1 * lnRRm * real_part(Xs1(i,*)*conj(Xs1(i,*)))) $
-                  / (S * alog(S)^3) $
-                  - Total(wghtr * W1 * real_part(Xs1(i,*)*conj(Xs1(i,*)))) $
-                  / (S * alog(S))
+    if n_elements(i1) gt 0 then $ ; Intensity functions
+        for i =0,Inp-1 do begin
+            i1(i) = Total(wghtr * W1 * real_part(Xs1(i,*)*conj(Xs1(i,*))))
+            di1dN(i) = i1(i) / N
+            di1dRm(i) = Total(wghtr * W1 * lnRRm * real_part(Xs1(i,*)*conj(Xs1(i,*)))) $
+                        / (alog(S)^2 * Rm)
+            di1dS(i) = Total(wghtr * W1 * lnRRm * real_part(Xs1(i,*)*conj(Xs1(i,*)))) $
+                       / (S * alog(S)^3) $
+                       - Total(wghtr * W1 * real_part(Xs1(i,*)*conj(Xs1(i,*)))) $
+                       / (S * alog(S))
 
-       i2(i) = Total(wghtr * W1 * real_part(Xs2(i,*)*conj(Xs2(i,*))))
-       di2dN(i) = i2(i) / N
-       di2dRm(i) = Total(wghtr * W1 * lnRRm * real_part(Xs2(i,*)*conj(Xs2(i,*)))) $
-                   / (alog(S)^2 * Rm)
-       di2dS(i) = Total(wghtr * W1 * lnRRm * real_part(Xs2(i,*)*conj(Xs2(i,*)))) $
-                  / (S * alog(S)^3) $
-                  - Total(wghtr * W1 * real_part(Xs2(i,*)*conj(Xs2(i,*)))) $
-                  / (S * alog(S))
-   endfor
+            i2(i) = Total(wghtr * W1 * real_part(Xs2(i,*)*conj(Xs2(i,*))))
+            di2dN(i) = i2(i) / N
+            di2dRm(i) = Total(wghtr * W1 * lnRRm * real_part(Xs2(i,*)*conj(Xs2(i,*)))) $
+                        / (alog(S)^2 * Rm)
+            di2dS(i) = Total(wghtr * W1 * lnRRm * real_part(Xs2(i,*)*conj(Xs2(i,*)))) $
+                       / (S * alog(S)^3) $
+                       - Total(wghtr * W1 * real_part(Xs2(i,*)*conj(Xs2(i,*)))) $
+                       / (S * alog(S))
+    endfor
 
 END
