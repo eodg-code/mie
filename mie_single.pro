@@ -175,8 +175,7 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
     endif else begin
         Inp = 1
         Inp2 = Inp
-        Dqv = [-1d0]
-        Dqv2 = Dqv
+        Dqv2 = [-1d0]
     endelse
 
     Dqxt = Dblarr(Sizes)
@@ -193,9 +192,12 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 
         IF (Dx(Size) LT 0.02) THEN NStop = 2 ELSE BEGIN
             CASE 1 OF
-                (Dx(Size) LE 8.0)    : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
-                (Dx(Size) LT 4200.0) : NStop = Dx(Size) + 4.05*Dx(Size)^(1./3.) + 2.0
-                ELSE                 : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
+                (Dx(Size) LE 8.0)    : $
+                    NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
+                (Dx(Size) LT 4200.0) : $
+                    NStop = Dx(Size) + 4.05*Dx(Size)^(1./3.) + 2.0
+                ELSE                 : $
+                    NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
             ENDCASE
         END
         NmX = LONG(MAX([NStop,ABS(Y)]) + 15.)
@@ -247,9 +249,9 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
             S = Dqv2 * Pi1
             T = S - Pi0
             if arg_present(Dqbk) or n_elements(dph) gt 0 then begin
-               Taun = N*T - Pi0
-               Sp = (A2 * (A + B)) * (Pi1 + Taun) + Sp
-               Sm = (A2 * (A - B)) * (Pi1 - Taun) + Sm
+                Taun = N*T - Pi0
+                Sp = (A2 * (A + B)) * (Pi1 + Taun) + Sp
+                Sm = (A2 * (A - B)) * (Pi1 - Taun) + Sm
             endif
             Pi0 = Pi1
             Pi1 = S + T*Turbo
@@ -284,10 +286,10 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 
     EndFor ; END of size loop
 
-    Dqsc =  2D0 * Dqsc / Dx^2
-    Dqxt =  2D0 * Dqxt / Dx^2
+    Dqsc = 2D0 * Dqsc / Dx^2
+    Dqxt = 2D0 * Dqxt / Dx^2
     if arg_present(Dqbk) then $
-        Dqbk =  4d0* DOUBLE(Dqbk*CONJ(Dqbk)) / Dx^2
+        Dqbk = 4d0* DOUBLE(Dqbk*CONJ(Dqbk)) / Dx^2
 
     ENDELSE ; END of if DLM keyword
 
