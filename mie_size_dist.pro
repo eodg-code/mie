@@ -16,21 +16,21 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
 ; CALLING SEQUENCE:
 ;
 ; INPUTS:
-;     distname    Name of the size distribution. 'gamma' according to
-;                 Hansen and Travis 1974 or 'lognormal'.
+;     distname    Name of the size distribution. 'modified_gamma'
+;                 according to Hansen and Travis 1974 or 'log_normal'.
 ;     Nd:         Number density of the particle distribution
 ;     params:     Array of size distribution parameters
-;                 distname eq 'gamma'
-;                     prarams[0] : a
-;                     prarams[1] : b
-;                     prarams[2] : minimum radius in the distribuion
-;                     prarams[3] : maximum radius in the distribuion
-;                 distname eq 'lognormal'
-;                     prarams[0] : Median radius of the particle
-;                                  distribution
-;                     prarams[1] : The spread of the distribution, such
-;                                  that the standard deviation of ln(r)
-;                                  is ln(S)
+;                 distname eq 'modified_gamma'
+;                     params[0] : a
+;                     params[1] : b
+;                     params[2] : minimum radius in the distribuion
+;                     params[3] : maximum radius in the distribuion
+;                 distname eq 'log_normal'
+;                     params[0] : Median radius of the particle
+;                                 distribution
+;                     params[1] : The spread of the distribution, such
+;                                 that the standard deviation of ln(r)
+;                                 is ln(S)
 ;     Wavenumber: Wavenumber of light (units must match units of the
 ;                 size distribution)
 ;     Cm:         Complex refractive index
@@ -123,6 +123,8 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
 ;     G. McGarragh, 29 Jul 2015: Added support to optionally output
 ;         several geometric parameters averaged over the size
 ;         distribution including Gavg, Vavg, Ravg, and RVW.
+;     G. McGarragh, 10 Dec 2015: Better naming of size distributions:
+;         gamma -> modified_gamma and lognormal -> log_normal.
 ;-
     Common mieln, absc, wght
 
@@ -133,10 +135,10 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
 ;   Create vectors for size integration
     Tq = gauss_cvf(0.999D0)
 
-    if distname eq 'gamma' then begin
+    if distname eq 'modified_gamma' then begin
         Rl = params[2]
         Ru = params[3]
-    endif else if distname eq 'lognormal' then begin
+    endif else if distname eq 'log_normal' then begin
         Rl = exp(alog(params[0])+Tq*alog(params[1]))
         Ru = exp(alog(params[0])-Tq*alog(params[1])+alog(4))
     endif else begin
@@ -168,10 +170,10 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
 
     shift_quadrature,absc,wght,Rl,Ru,R,W1
 
-    if distname eq 'gamma' then begin
+    if distname eq 'modified_gamma' then begin
         W1P = W1 * Nd[0] * R^((1. - 3. * params[1]) / params[1]) * $
               exp(-R / (params[0] * params[1]))
-    endif else if distname eq 'lognormal' then begin
+    endif else if distname eq 'log_normal' then begin
         W1P = W1 * Nd[0] / (sqrt(2D0) * sqrt(!dpi) * R * ALOG(params[1])) * $
               EXP(-0.5D0*(ALOG(R/params[0]) / ALOG(params[1]))^2)
     endif
