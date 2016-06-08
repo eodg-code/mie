@@ -2,18 +2,12 @@
 # Gareth Thomas
 # Greg McGarragh
 
-# Locations of IDL and IFC may need to be changed
-#IDL_DIR = /usr/local/PACK/idl83/idl
-#IFORT_DIR = /usr/local/PACK/composerxe
-IDL_DIR = $(HOME)/opt/exelis/idl83
-IFORT_DIR = $(HOME)/opt/intel_2013_sp1.1.106/parallel_studio_xe_2013/composer_xe_2013_sp1.1.106/compiler
+# Location specific configurations
+include ../make.inc
 
 # If the version number of IDL is prior to 5.2 then set the IDL flag below to
 # "-D__IDLPRE53__".
 #IDL = -D__IDLPRE53__
-
-FCOMP = ifort
-#FCOMP = gfortran
 
 # Uncomment to compile a multithreaded version
 GCC_OPENMP = -fopenmp
