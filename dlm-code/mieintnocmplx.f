@@ -120,7 +120,7 @@
          End If
       End If
       NmX = Max(Real(NStop),Real(Abs(Y))) + 15.
-      If (Nmx .gt. Itermax) then
+      If (Nmx .Gt. Itermax) Then
           Error = 2
           Return
       End If
@@ -165,7 +165,7 @@
          Dqxt   = Tnp1 *      Dble(A + B)          + Dqxt
          Dqsc   = Tnp1 * (A*Conjg(A) + B*Conjg(B)) + Dqsc
          Bscnum = Tnp1 * (-1)**N * (A - B)         + Bscnum
-         If (N.Gt.1) then
+         If (N.Gt.1) Then
             Dg = Dg + (dN*dN - 1) * Dble(ANM1*Conjg(A) + BNM1 * Conjg(B)) /
      &           dN + TNM1 * Dble(ANM1*Conjg(BNM1)) / (dN*dN - dN)
          End If
@@ -174,7 +174,7 @@
          APB = A2 * (A + B)
          AMB = A2 * (A - B)
          Do I = 1,Inp2
-            If (I.GT.Inp) Then
+            If (I.Gt.Inp) Then
                S(I) = -Pi1(I)
             Else
                S(I) = Dqv(I) * Pi1(I)
@@ -193,7 +193,7 @@
          Chi1 = Chi
          Xi1 = Dcmplx(APsi1,Chi1)
       End Do
-      If (Dg.GT.0) Dg = 2 * Dg / Dqsc
+      If (Dg.Gt.0) Dg = 2 * Dg / Dqsc
       Dx2 = Dx**2
       Dqsc =  2 * Dqsc / Dx2
       Dqxt =  2 * Dqxt / Dx2

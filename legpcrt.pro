@@ -1,4 +1,4 @@
-Pro legpcrt,Inlc,lc,Inp,qv,phase
+pro legpcrt,Inlc,lc,Inp,qv,phase
 
 ;  Inlc=number of legendre coefficient
 ;  lc= legendre coefficients

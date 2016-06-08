@@ -1,4 +1,4 @@
-Pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
+pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
 
   Imaxx = 2600
   Itermax = 3500
@@ -8,27 +8,27 @@ Pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
   Dqsc(*) = 0D0
   Dg(*) = 0D0
 
-  For I = 0, NPts - 1 do begin
-    IF (Dx(I) GT Imaxx) THEN MESSAGE, 'Error: Size Parameter Overflow in Mie'
+  for I = 0, NPts - 1 do begin
+    if (Dx(I) GT Imaxx) then message, 'Error: Size Parameter Overflow in Mie'
     Ir = 1.D0 / Cm
      Y =  Dx(I) * Cm
 
-    IF (Dx(I) LT 0.02) THEN  NStop = 2 ELSE $
-      BEGIN
-        CASE 1 OF
+    if (Dx(I) LT 0.02) then NStop = 2 else $
+      begin
+        case 1 OF
         (Dx(I) LE 8)    : NStop = Dx(I) + 4.00*Dx(I)^(1./3.) + 2.0
         (Dx(I) LT 4200) : NStop = Dx(I) + 4.05*Dx(I)^(1./3.) + 2.0
-        ELSE            : NStop = Dx(I) + 4.00*Dx(I)^(1./3.) + 2.0
-       	ENDCASE
-      END
+        else            : NStop = Dx(I) + 4.00*Dx(I)^(1./3.) + 2.0
+       	endcase
+      end
     NmX = FIX(MAX([NStop,ABS(Y)]) + 15.)
     D = DCOMPLEXARR(Nmx+1)
 
-    FOR N = Nmx-1,1,-1 DO $
-      BEGIN
+    for N = Nmx-1,1,-1 do $
+      begin
         A1 = (N+1) / Y
         D[N] = A1 - 1/(A1+D[N+1])
-      END
+      end
 
 
     Psi0 = Cos(Dx(I))
@@ -40,8 +40,8 @@ Pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
 
     Tnp1 = 1
 
-    FOR N = 1,Nstop DO $
-      BEGIN
+    for N = 1,Nstop do $
+      begin
         DN = Double(N)
         Tnp1 = Tnp1 + 2
         Tnm1 = Tnp1 - 2
@@ -55,7 +55,7 @@ Pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
         B = ((D[N]*Cm+Rnx)*Psi-Psi1) / ((D[N]*Cm+Rnx)*  Xi-  Xi1)
         Dqxt(I) = Tnp1 * DOUBLE(A + B) + Dqxt(I)
         Dqsc(I) = Tnp1 * DOUBLE(A*CONJ(A) + B*CONJ(B)) + Dqsc(I)
-        IF (N GT 1) THEN Dg(I) = Dg(I) $
+        if (N GT 1) then Dg(I) = Dg(I) $
                             + (dN*dN - 1) * DOUBLE(ANM1*CONJ(A) + BNM1 * CONJ(B)) / dN $
                             + TNM1 * DOUBLE(ANM1*CONJ(BNM1)) / (dN*dN - dN)
         Anm1 = A
@@ -70,11 +70,10 @@ Pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
         Chi1 = Chi
         Xi1 = DCOMPLEX(Psi1,Chi1)
 
-    END; For Nstop
+    end; for Nstop
 
-    IF (Dg(I) GT 0) THEN Dg(I) = 2 * Dg(I) / Dqsc(I)
+    if (Dg(I) GT 0) then Dg(I) = 2 * Dg(I) / Dqsc(I)
     Dqsc(I) =  2 * Dqsc(I) / Dx(I)^2
     Dqxt(I) =  2 * Dqxt(I) / Dx(I)^2
-
-  EndFor
-End
+  endfor
+end

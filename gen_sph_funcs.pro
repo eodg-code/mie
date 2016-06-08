@@ -103,5 +103,4 @@ pro gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2
             p2m2[i,j+1] = ((da + da_2x2) * p2m2[i,j] - db_2x2 * p2m2[i,j-1]) / dc_2x2
          endfor
      endfor
-
 end

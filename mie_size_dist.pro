@@ -1,4 +1,4 @@
-PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
+pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
                    dlm=dlm, npts=npts, xres=xres, info=info, $
                    mthread=mthread, Bext, Bsca, w, g, SPM, Bbac=Bbac, $
                    Gavg=Gavg, Vavg=Vavg, Ravg=Ravg, RVW=RVW
@@ -263,4 +263,4 @@ PRO mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
     if n_elements(Vavg) then Vavg = total(W1PV)
     if n_elements(Ravg) then Ravg = total(W1P * R)
     if n_elements(RVW) then RVW = total(W1PV * R) / Vavg
-END
+end

@@ -79,5 +79,4 @@ pro scat_phase_matrix_exp, n_l, qx, qw, F, n_l2, coefs
         a = (2 * i + 1) / 2.d
         coefs[*,i] *= a
     endfor
-
 end

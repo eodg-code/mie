@@ -140,5 +140,6 @@ Pro Quadrature, Quadtype, NPts, Abscissa, Weight
     Weight = Reverse(Weight)
   Endelse
   EndCase
+
   Return
-end ; Of main procedure Quadrature
+End ; Of main procedure Quadrature

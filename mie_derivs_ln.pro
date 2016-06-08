@@ -1,10 +1,9 @@
-    PRO mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, $
-                       dBextdN,dBextdRm,dBextdS,dBscadN,dBscadRm,dBscadS, $
-                       i1,i2,di1dN,di1dRm,di1dS,di2dN,di2dRm,di2dS
-
+pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, $
+                   dBextdN,dBextdRm,dBextdS,dBscadN,dBscadRm,dBscadS, $
+                   i1,i2,di1dN,di1dRm,di1dS,di2dN,di2dRm,di2dS
 ;+
 ; NAME:
-;     MIE_DERIVS_LN
+;     mie_derivs_ln
 ;
 ; PURPOSE:
 ;     Calculates the scattering parameters and their analytical
@@ -174,5 +173,4 @@
                        - Total(wghtr * W1 * real_part(Xs2(i,*)*conj(Xs2(i,*)))) $
                        / (S * alog(S))
     endfor
-
-END
+end

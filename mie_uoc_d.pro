@@ -1,5 +1,4 @@
-PRO Mie_Uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
-
+pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
 ;+
 ; NAME:
 ;     MIE_UOC_D
@@ -50,9 +49,9 @@ PRO Mie_Uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
   Imaxx = 12000
   RIMax = 2.5
   Itermax = Imaxx * RIMax
-  Imaxnp = 1100		; Change this as required
+  Imaxnp = 1100 ; Change this as required
   Sizes = N_Elements(Dx)
-  if (N_Elements(Inp) Eq 0) Then begin
+  if (N_Elements(Inp) Eq 0) then begin
     Inp = 1
     Dqv = 0
   endif
@@ -65,26 +64,26 @@ PRO Mie_Uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
   Dg = Dblarr(Sizes)
   Dph = Dblarr(Inp,Sizes)
 
-  For Size = 0, Sizes - 1 Do Begin
+  for Size = 0, Sizes - 1 do begin
 
-    IF (Dx(Size) GT Imaxx) THEN MESSAGE, 'Error: Size Parameter Overflow in Mie'
+    if (Dx(Size) GT Imaxx) then message, 'Error: Size Parameter Overflow in Mie'
     Ir = 1.D0 / Cm
     Y =  Dx(Size) * Cm
 
-    IF (Dx(Size) LT 0.02) THEN  NStop = 2 ELSE BEGIN
-      CASE 1 OF
+    if (Dx(Size) LT 0.02) then NStop = 2 else begin
+      case 1 OF
         (Dx(Size) LE 8.0)    : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
         (Dx(Size) LT 4200.0) : NStop = Dx(Size) + 4.05*Dx(Size)^(1./3.) + 2.0
-        ELSE                 : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
-      ENDCASE
-    END
+        else                 : NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
+      endcase
+    end
     NmX = FIX(MAX([NStop,ABS(Y)]) + 15.)
     D = DCOMPLEXARR(Nmx+1)
 
-    FOR N = Nmx-1,1,-1 DO BEGIN
+    for N = Nmx-1,1,-1 do begin
       A1 = (N+1) / Y
       D(N) = A1 - 1/(A1+D(N+1))
-    END
+    end
 
     Sm = DCOMPLEXARR(Inp)
     Sp = DCOMPLEXARR(Inp)
@@ -103,7 +102,7 @@ PRO Mie_Uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
     Dqxt(Size) = 0.D0
     Tnp1 = 1
 
-    FOR N = 1,Nstop DO BEGIN
+    for N = 1,Nstop do begin
       DN = Double(N)
       Tnp1 = Tnp1 + 2
       Tnm1 = Tnp1 - 2
@@ -117,7 +116,7 @@ PRO Mie_Uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
       B = ((D[N]*Cm+Rnx)*Psi-Psi1) / ((D[N]*Cm+Rnx)*  Xi-  Xi1)
       Dqxt(Size) = Tnp1 *      DOUBLE(A + B)          + Dqxt(Size)
       Dqsc(Size) = Tnp1 * DOUBLE(A*CONJ(A) + B*CONJ(B)) + Dqsc(Size)
-      IF (N GT 1) THEN Dg(Size) = Dg(Size) $
+      if (N GT 1) then Dg(Size) = Dg(Size) $
                             + (dN*dN - 1) * DOUBLE(ANM1*CONJ(A) + BNM1 * CONJ(B)) / dN $
                             + TNM1 * DOUBLE(ANM1*CONJ(BNM1)) / (dN*dN - dN)
       Anm1 = A
@@ -137,9 +136,9 @@ PRO Mie_Uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
       Chi1 = Chi
       Xi1 = DCOMPLEX(Psi1,Chi1)
 
-    END; For Nstop
+    end ; for Nstop
 
-    IF (Dg(Size) GT 0) THEN Dg(Size) = 2 * Dg(Size) / Dqsc(Size)
+    if (Dg(Size) GT 0) then Dg(Size) = 2 * Dg(Size) / Dqsc(Size)
     Dqsc(Size) =  2 * Dqsc(Size) / Dx(Size)^2
     Dqxt(Size) =  2 * Dqxt(Size) / Dx(Size)^2
 
@@ -147,6 +146,7 @@ PRO Mie_Uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
     Xs2(*,Size) = (Sp - Sm) / 2
     Dph(*,Size) = 2 * DOUBLE(Xs1(*,Size)*CONJ(Xs1(*,Size)) + Xs2(*,Size)*CONJ(Xs2(*,Size))) / (Dx(Size)^2 * Dqsc(Size))
     Dqbk(Size) =  4 * ABS(Xs1(Inp-1)^2) / Dx(Size)^2
-  End
-  Return
-End
+  end
+
+  return
+end

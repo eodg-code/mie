@@ -1,8 +1,8 @@
-PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
+pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
                silent=silent,mthread=mthread
 ;+
 ; NAME:
-;     MIE_SINGLE
+;     mie_single
 ;
 ; PURPOSE:
 ;     Calculates the scattering parameters of a series of particles
@@ -115,7 +115,7 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
             'should be negative for absorbing particles. '+ $
             'Set /silent to hide this message.'
 
-    IF KEYWORD_SET(dlm) THEN BEGIN
+    if keyword_set(dlm) then begin
 ;   If the dlm keyword is set, use the DLM version of the code
     DxArr = dblarr(Sizes)
     DxArr[*] = Dx
@@ -127,7 +127,7 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
         else mthrd = mthread
     endif else mthrd = 1
 
-    IF KEYWORD_SET(dqv) THEN BEGIN
+    if keyword_set(dqv) then begin
         Inp = n_elements(dqv)
         mie_dlm_single, DxArr, DCm, dqv=double(dqv), Dqxt, Dqsc, Dqbk, $
                      Dg, Xs1, Xs2, F11, F33, F12, F34; , mthread=mthrd
@@ -157,13 +157,13 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 ;                                      Xs2[*,i]*CONJ(Xs1[*,i])) * $
 ;                                      complex(0.0d, 1.0d))
 ;       endfor
-    ENDIF ELSE BEGIN
+    endif else begin
         mie_dlm_single, DxArr, DCm, Dqxt, Dqsc, Dqbk, Dg;, mthread=mthrd
-    ENDELSE
+    endelse
 
-    ENDIF ELSE BEGIN ;No DLM? Do everything in IDL
+    endif else begin ;No DLM? Do everything in IDL
 
-    if KEYWORD_SET(dqv) then begin
+    if keyword_set(dqv) then begin
         tmp = where(dqv eq -1.0,bktheta)
         if bktheta eq 0 then dqv2 = [dqv,-1d] else dqv2 = dqv
         Inp  = n_elements(dqv)
@@ -183,30 +183,30 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
     Dqbk = DComplexArr(Sizes)
     Dg = Dblarr(Sizes)
 
-    For Size = 0l, Sizes - 1 Do Begin
+    for Size = 0l, Sizes - 1 do begin
 
-;       IF (Dx(Size) GT Imaxx) THEN $
-;           MESSAGE, 'Error: Size Parameter Overflow in Mie'
+;       if (Dx(Size) GT Imaxx) then $
+;           message, 'Error: Size Parameter Overflow in Mie'
         Ir = 1.D0 / Cm
         Y =  Dx(Size) * Cm
 
-        IF (Dx(Size) LT 0.02) THEN NStop = 2 ELSE BEGIN
-            CASE 1 OF
+        if (Dx(Size) LT 0.02) then NStop = 2 else begin
+            case 1 OF
                 (Dx(Size) LE 8.0)    : $
                     NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
                 (Dx(Size) LT 4200.0) : $
                     NStop = Dx(Size) + 4.05*Dx(Size)^(1./3.) + 2.0
-                ELSE                 : $
+                else                 : $
                     NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
-            ENDCASE
-        END
+            endcase
+        end
         NmX = LONG(MAX([NStop,ABS(Y)]) + 15.)
         D = DCOMPLEXARR(Nmx+1)
 
-        FOR N = Nmx-1,1,-1 DO BEGIN
+        for N = Nmx-1,1,-1 do begin
             A1 = (N+1) / Y
             D(N) = A1 - 1/(A1+D(N+1))
-        END
+        end
 
         Sm = DCOMPLEXARR(Inp2)
         Sp = DCOMPLEXARR(Inp2)
@@ -226,7 +226,7 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
         Dqbk(Size) = 0.D0
         Tnp1 = 1D0
 
-        FOR N = 1l,NStop DO BEGIN
+        for N = 1l,NStop do begin
             DN = Double(N)
             Tnp1 = Tnp1 + 2D0
             Tnm1 = Tnp1 - 2D0
@@ -240,7 +240,7 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
             B = ((D[N]*Cm+Rnx)*Psi-Psi1) / ((D[N]*Cm+Rnx)*  Xi-  Xi1)
             Dqxt(Size) = Tnp1 * DOUBLE(A + B)                 + Dqxt(Size)
             Dqsc(Size) = Tnp1 * DOUBLE(A*CONJ(A) + B*CONJ(B)) + Dqsc(Size)
-            IF (N GT 1) THEN Dg(Size) = Dg(Size) $
+            if (N GT 1) then Dg(Size) = Dg(Size) $
                       + (dN*dN - 1) * DOUBLE(ANM1*CONJ(A) + BNM1 * CONJ(B)) / dN $
                       + TNM1 * DOUBLE(ANM1*CONJ(BNM1)) / (dN*dN - dN)
             Anm1 = A
@@ -262,12 +262,12 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
             Chi1 = Chi
             Xi1 = DCOMPLEX(Psi1,Chi1)
 
-        END; For NStop
+        end; for NStop
 
-        IF (Dg(Size) GT 0) THEN Dg(Size) = 2D0 * Dg(Size) / Dqsc(Size)
+        if (Dg(Size) GT 0) then Dg(Size) = 2D0 * Dg(Size) / Dqsc(Size)
 
 ;       The following lines are not needed unless dqv was set
-        IF n_elements(dqv) gt 0 THEN BEGIN
+        if n_elements(dqv) gt 0 then begin
             Xs1[*,Size] = ((Sp[0:Inp-1] + Sm[0:Inp-1]) / 2D0)
             Xs2[*,Size] = ((Sp[0:Inp-1] - Sm[0:Inp-1]) / 2D0)
             SPM[0,*,Size] =  double(Xs1[*,Size]*CONJ(Xs1[*,Size]) + $
@@ -279,18 +279,17 @@ PRO Mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
             SPM[3,*,Size] = -double((Xs1[*,Size]*CONJ(Xs2[*,Size]) - $
                                      Xs2[*,Size]*CONJ(Xs1[*,Size])) * $
                                               complex(0.0d, 1.0d)) / Dqsc(Size)
-        ENDIF
+        endif
 
         if arg_present(Dqbk) then $
             Dqbk(Size) = ( Sp[Inp2-1] + Sm[Inp2-1] ) / 2d0
 
-    EndFor ; END of size loop
+    endfor ; end of size loop
 
     Dqsc = 2D0 * Dqsc / Dx^2
     Dqxt = 2D0 * Dqxt / Dx^2
     if arg_present(Dqbk) then $
         Dqbk = 4d0* DOUBLE(Dqbk*CONJ(Dqbk)) / Dx^2
 
-    ENDELSE ; END of if DLM keyword
-
-End
+    endelse ; end of if DLM keyword
+end

@@ -1,11 +1,12 @@
 # mie_dlm_single IDL DLM makefile
 # Gareth Thomas
+# Greg McGarragh
 
 # Locations of IDL and IFC may need to be changed
-IDL_DIR = /usr/local/PACK/idl83/idl
-IFORT_DIR = /usr/local/PACK/composerxe
-#IDL_DIR = $(HOME)/opt/exelis/idl82
-#IFORT_DIR = $(HOME)/opt/intel_2013_sp1.1.106/parallel_studio_xe_2013/composer_xe_2013_sp1.1.106/compiler
+#IDL_DIR = /usr/local/PACK/idl83/idl
+#IFORT_DIR = /usr/local/PACK/composerxe
+IDL_DIR = $(HOME)/opt/exelis/idl83
+IFORT_DIR = $(HOME)/opt/intel_2013_sp1.1.106/parallel_studio_xe_2013/composer_xe_2013_sp1.1.106/compiler
 
 # If the version number of IDL is prior to 5.2 then set the IDL flag below to
 # "-D__IDLPRE53__".

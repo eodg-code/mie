@@ -1,14 +1,13 @@
-PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
+pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
                 dQextdx,dQextdRem,dQextdImm,$
                 dQscadx,dQscadRem,dQscadImm,$
                 i1,i2,di1dx,di2dx,di1dRem,di1dImm,di2dRem,di2dImm,$
                 silent=silent, $
                 asym=asym,dasymdx=dasymdx, $
                 dasymdRem=dasymdRem,dasymdImm=dasymdImm
-
 ;+
 ; NAME:
-;     MIE_DERIVS
+;     mie_derivs
 ;
 ; PURPOSE:
 ;     Calculates the scattering parameters and their analytical
@@ -95,15 +94,15 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
                  'should be negative for absorbing particles. '+$
                  'Set /silent to hide this message.'
 
-    IF x LT 0.02 THEN NStop = 2 ELSE BEGIN
-        CASE 1 OF
+    if x LT 0.02 then NStop = 2 else begin
+        case 1 OF
             x LE 8.0    : NStop = x + 4.00*x^(1./3.) + 1.0
             x LT 4200.0 : NStop = x + 4.05*x^(1./3.) + 2.0
             ; no. of terms required for convergence of Mie expressions
             ; (Wiscombe 1980)
-            ELSE        : NStop = x + 4.00*x^(1./3.) + 2.0
-        ENDCASE
-    ENDELSE
+            else        : NStop = x + 4.00*x^(1./3.) + 2.0
+        endcase
+    endelse
 
     m = cm
 
@@ -111,10 +110,10 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
     Nmx = FIX(MAX([NStop,ABS(y)]) + 15.)
     D = DCOMPLEXARR(Nmx+1)
 
-    FOR p = Nmx-1,1,-1 DO BEGIN
+    for p = Nmx-1,1,-1 do begin
         R = (p+1) / y
         D(p) = R - 1/(R+D(p+1)) ;downward recurrence to find A_n(y)
-    ENDFOR
+    endfor
 
     psim1 = cos(x)
     psi0 = sin(x)
@@ -135,10 +134,10 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
     dQscadRem = 0.D0
     dQscadImm = 0.D0
 
-    IF ARG_PRESENT(asym) OR $
-        ARG_PRESENT(dasymdx) OR $
-        ARG_PRESENT(dasymdRem) OR $
-        ARG_PRESENT(dasymdImm) THEN BEGIN
+    if ARG_PRESENT(asym) or $
+        ARG_PRESENT(dasymdx) or $
+        ARG_PRESENT(dasymdRem) or $
+        ARG_PRESENT(dasymdImm) then begin
 
         asym = 0.D0
         dgdx = 0.D0
@@ -146,7 +145,7 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
         dgdk = 0.d0
 
         calc_g = 1b
-    ENDIF ELSE calc_g = 0b
+    endif else calc_g = 0b
 
     Sp = 0.D0
     Sm = 0.D0
@@ -157,7 +156,7 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
     dSmdRem = 0.D0
     dSmdImm = 0.D0
 
-    FOR n = 1,Nstop DO BEGIN
+    for n = 1,Nstop do begin
         psi1 = Double(2d0*n-1d0)*psi0/x - psim1
         chi1 = Double(2d0*n-1d0)*chi0/x - chim1 ;the recurrence relations
 
@@ -199,8 +198,8 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
                     IMAGINARY(a_n)*IMAGINARY(dadImm) + DOUBLE(b_n)*DOUBLE(dbdImm) + $
                     IMAGINARY(b_n)*IMAGINARY(dbdImm)) + dQscadImm
 
-        IF calc_g THEN BEGIN
-           IF (n GT 1) THEN BEGIN
+        if calc_g then begin
+           if (n GT 1) then begin
               ; We are running one n behind for asymmetry parameter, since
               ; we require a_(n+1), b_(n+1) etc...
               dn = DOUBLE( n-1 )
@@ -226,7 +225,7 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
               dgdk += pre0 * DOUBLE( CONJ(a_n)*dadkm1 + anm1*CONJ(dadImm) +$
                                      CONJ(b_n)*dbdkm1 + bnm1*CONJ(dbdImm)   ) + $
                       pre1 * DOUBLE( dadkm1*CONJ(bnm1) + anm1*CONJ(dbdkm1) )
-           ENDIF
+           endif
 
            anm1 = a_n
            bnm1 = b_n
@@ -236,7 +235,7 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
            dbdnm1 = dbdRem
            dadkm1 = dadImm
            dbdkm1 = dbdImm
-        ENDIF
+        endif
 
         ; formulae for the derivatives of the Qs
 
@@ -258,8 +257,7 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
         dSmdImm = (2d0*n+1d0)*(dadImm-dbdImm)*(Pi1-Tau1)/(n^2d0+n) + dSmdImm
         Pi0 = Pi1
         Pi1 = s + t*(n+1d0)/n
-
-    ENDFOR
+    endfor
 
     Qext = 2d0*Qext/x^2d0
 
@@ -297,8 +295,7 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
     di2dRem = 2*(DOUBLE(S2)*DOUBLE(dS2dRem) + IMAGINARY(S2)*IMAGINARY(dS2dRem))
     di2dImm = 2*(DOUBLE(S2)*DOUBLE(dS2dImm) + IMAGINARY(S2)*IMAGINARY(dS2dImm))
 
-
-    IF calc_g THEN BEGIN
+    if calc_g then begin
         fxx = 4d0 / x / x
 
         asym = fxx * asym / Qsca
@@ -306,8 +303,7 @@ PRO mie_derivs, x,Cm,Dqv,Qext,Qsca,$
         dasymdx   = ( fxx*dgdx - asym*(dQscadx+2d0*Qsca/x) ) / Qsca
         dasymdRem = ( fxx*dgdn - asym*dQscadRem ) / Qsca
         dasymdImm = ( fxx*dgdk - asym*dQscadImm ) / Qsca
-    ENDIF
+    endif
 
-    RETURN
-
-END
+    return
+end
