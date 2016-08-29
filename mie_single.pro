@@ -1,5 +1,3 @@
-pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
-               silent=silent,mthread=mthread
 ;+
 ; NAME:
 ;     mie_single
@@ -20,7 +18,9 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 ;     Dx:         A 1D array of particle size parameters
 ;     Cm:         The complex refractive index of the particles
 ;
-; KEYWORD INPUTS:
+; OPTIONAL INPUTS:
+;
+; KEYWORD PARAMETERS:
 ;     dqv:        An array of the cosines of scattering angles at which
 ;                 to compute the phase function.
 ;     dlm:        If set the code will call the IDL DLM version of the
@@ -63,9 +63,11 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 ;                 Dqv and the 3rd dimension is the same dimension as Dx.
 ;                 Also only calculated if Dqv is specified.
 ;
+; OPTIONAL OUTPUTS:
+;
 ; KEYWORD OUTPUTS:
 ;
-; WARNING:
+; RESTRICTIONS:
 ;     The backscatter efficiency differs by 4 pi from the standard
 ;     definition. The user is directed to Bohren and Huffman -
 ;     Absorption and Scattering of Light by Small Particles (Wiley-VCH
@@ -103,6 +105,9 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 ;     G. McGarragh, 29 Jul 2015 (DLM output of the phase matrix SPM was
 ;         fixed so no need to calculate it here any more.)
 ;-
+
+pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
+               silent=silent,mthread=mthread
 
     Imaxx = 120000l
     RIMax = 2.5

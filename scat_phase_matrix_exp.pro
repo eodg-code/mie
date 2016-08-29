@@ -29,7 +29,7 @@ pro scat_phase_matrix_exp, n_l, qx, qw, F, n_l2, coefs
 ;          F[5,*] = F12[*]
 ;          F[6,*] = F34[*]
 ;
-; KEYWORD INPUTS:
+; KEYWORD PARAMETERS:
 ;
 ; OUTPUTS:
 ;     coefs: 2D array (6, n_l) of expansions coefficients.

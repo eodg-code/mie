@@ -1,4 +1,3 @@
-pro gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2
 ;+
 ; NAME:
 ;     gen_sph_funcs
@@ -18,7 +17,9 @@ pro gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2
 ;     mu:   Array of scattering anlge (0 - 180) cosines for which to
 ;           compute functions for.
 ;
-; KEYWORD INPUTS:
+; OPTIONAL INPUTS:
+;
+; KEYWORD PARAMETERS:
 ;
 ; OUTPUTS:
 ;     p00:  2D array (n_elements(mu), n_l) of P^l_{0,0} values where l
@@ -30,6 +31,8 @@ pro gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2
 ;     p2m2: 2D array (n_elements(mu), n_l) of P^l_{2,-2} values where l
 ;           is order.
 ;
+; OPTIONAL OUTPUTS:
+;
 ; KEYWORD OUTPUTS:
 ;
 ; RESTRICTIONS:
@@ -38,6 +41,8 @@ pro gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2
 ;     G. McGarragh, 28 Jul 2015: Taken from LMie (google it) and
 ;         translated from C.  Originally based on Mischenko 1991.
 ;-
+
+pro gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2
 
     n_mu = n_elements(mu)
 
@@ -102,5 +107,5 @@ pro gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2
 
             p2m2[i,j+1] = ((da + da_2x2) * p2m2[i,j] - db_2x2 * p2m2[i,j-1]) / dc_2x2
          endfor
-     endfor
+    endfor
 end

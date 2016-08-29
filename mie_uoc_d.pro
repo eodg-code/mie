@@ -1,4 +1,3 @@
-pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
 ;+
 ; NAME:
 ;     MIE_UOC_D
@@ -22,7 +21,7 @@ pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
 ;     Dqv:  The cosine of the scattering angles at which to calculate
 ;           the intensity functions etc
 ;
-; KEYWORD INPUTS:
+; KEYWORD PARAMETERS:
 ;
 ; OUTPUTS:
 ;     Xs1:  The first amplitude function - amplitude of light polarised
@@ -37,7 +36,11 @@ pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
 ;     Dg:   The asymetry parameter
 ;     Dph:  The phase function - an array of the same dimension as Dqv.
 ;
+; OPTIONAL OUTPUTS:
+;
 ; KEYWORD OUTPUTS:
+;
+; RESTRICTIONS:
 ;
 ; MODIFICATION HISTORY:
 ;       G. Thomas, 1998: mie_uoc.pro (translation of mieint.f to IDL)
@@ -45,6 +48,8 @@ pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
 ;           particle sizes and included calculation of phase function)
 ;       G. Thomas, Sept 2003: (Put into EODG routines format)
 ;-
+
+pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
 
   Imaxx = 12000
   RIMax = 2.5

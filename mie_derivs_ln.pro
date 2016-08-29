@@ -1,6 +1,3 @@
-pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, $
-                   dBextdN,dBextdRm,dBextdS,dBscadN,dBscadRm,dBscadS, $
-                   i1,i2,di1dN,di1dRm,di1dS,di2dN,di2dRm,di2dS
 ;+
 ; NAME:
 ;     mie_derivs_ln
@@ -33,7 +30,7 @@ pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, $
 ;                 positive scalar whos units match those of Rm.
 ;     Cm:         Complex refractive index
 ;
-; KEYWORD INPUTS:
+; KEYWORD PARAMETERS:
 ;     Dqv:        An array of the cosines of scattering angles at which
 ;                 to compute the intensity functions.
 ;
@@ -90,6 +87,10 @@ pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, $
 ;     G. Thomas, Jun 2005: Implemented 0.1 step size in X and trapezium
 ;         quadrature. Also added npts and info keywords.
 ;-
+
+pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, $
+                   dBextdN,dBextdRm,dBextdS,dBscadN,dBscadRm,dBscadS, $
+                   i1,i2,di1dN,di1dRm,di1dS,di2dN,di2dRm,di2dS
 
     Common miedervln, absc, wght
 

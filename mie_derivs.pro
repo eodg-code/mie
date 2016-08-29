@@ -1,10 +1,3 @@
-pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
-                dQextdx,dQextdRem,dQextdImm,$
-                dQscadx,dQscadRem,dQscadImm,$
-                i1,i2,di1dx,di2dx,di1dRem,di1dImm,di2dRem,di2dImm,$
-                silent=silent, $
-                asym=asym,dasymdx=dasymdx, $
-                dasymdRem=dasymdRem,dasymdImm=dasymdImm
 ;+
 ; NAME:
 ;     mie_derivs
@@ -35,7 +28,9 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
 ;     Dqv:       The cosine of the scattering angles at which to
 ;                calculate the intensity functions etc
 ;
-; KEYWORD INPUTS:
+; OPTIONAL INPUTS:
+;
+; KEYWORD PARAMETERS:
 ;     SILENT:    Don't give warnings about positive k values.
 ;
 ; OUTPUTS:
@@ -68,6 +63,8 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
 ;                NB. The values of involving the intensity functions
 ;                are arrays of the same dimension as dqv
 ;
+; OPTIONAL OUTPUTS:
+;
 ; KEYWORD OUTPUTS:
 ;     asym:       The asymmetry parameter.
 ;     dasymdx:    Derivative of asymmetry wrt size parameter.
@@ -88,6 +85,14 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
 ;     A. Smith, Aug 2010: Added positive k warning.
 ;     A. Smith, Apr 2013: Added asymmetry parameter.
 ;-
+
+pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
+                dQextdx,dQextdRem,dQextdImm,$
+                dQscadx,dQscadRem,dQscadImm,$
+                i1,i2,di1dx,di2dx,di1dRem,di1dImm,di2dRem,di2dImm,$
+                silent=silent, $
+                asym=asym,dasymdx=dasymdx, $
+                dasymdRem=dasymdRem,dasymdImm=dasymdImm
 
     if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
         message, /continue,'Warning: Imaginary part of refractive index '+$

@@ -1,7 +1,7 @@
 pro legpcrt,Inlc,lc,Inp,qv,phase
 
 ;  Inlc=number of legendre coefficient
-;  lc= legendre coefficients
+;  lc=legendre coefficients
 ;  Inp=numbr of quadrature value=number of angles
 ;  qv=cos(angles)
 ;  phase=recomputed phase function

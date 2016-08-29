@@ -1,7 +1,3 @@
-pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
-                   dlm=dlm, npts=npts, xres=xres, info=info, $
-                   mthread=mthread, Bext, Bsca, w, g, SPM, Bbac=Bbac, $
-                   Gavg=Gavg, Vavg=Vavg, Ravg=Ravg, RVW=RVW
 ;+
 ; NAME:
 ;     mie_size_dist
@@ -35,7 +31,7 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
 ;                 size distribution)
 ;     Cm:         Complex refractive index
 ;
-; KEYWORD INPUTS:
+; KEYWORD PARAMETERS:
 ;     Dqv:        An array of the cosines of scattering angles at which
 ;                 to compute the phase function.
 ;     dlm:        If set the IDL DLM version of the Mie scattering
@@ -76,6 +72,8 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
 ;                 F33 (SPM[1,*]), F12 (SPM[2,*]), F34 (SPM[3,*]), where
 ;                 the 2nd dimentsion is the same dimension as Dqv. Also
 ;                 only calculated if Dqv is specified.
+;
+; OPTIONAL OUTPUTS:
 ;
 ; KEYWORD OUTPUTS:
 ;     Bbac:       The backscatter coefficient
@@ -126,6 +124,12 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
 ;     G. McGarragh, 10 Dec 2015: Better naming of size distributions:
 ;         gamma -> modified_gamma and lognormal -> log_normal.
 ;-
+
+pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
+                   dlm=dlm, npts=npts, xres=xres, info=info, $
+                   mthread=mthread, Bext, Bsca, w, g, SPM, Bbac=Bbac, $
+                   Gavg=Gavg, Vavg=Vavg, Ravg=Ravg, RVW=RVW
+
     Common mieln, absc, wght
 
     ru_max = 10000d0
