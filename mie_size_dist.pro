@@ -232,8 +232,6 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
                         Xs1, Xs2, DSPM ;, mthread=mthrd
         endelse
     endif else begin
-        inp = 1
-        Dqv = 1D0
         if keyword_set(dlm) then begin
             Mie_dlm_single, double(Dx),dcomplex(Cm),Dqxt,Dqsc,Dqbk,Dg
         endif else begin
