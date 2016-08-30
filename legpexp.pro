@@ -1,20 +1,18 @@
 pro legpexp,Inp,qv,qw,phase,Inlc,lc
 
-;  Expands function as a Legendre series.  The function is assumed to
-;  have been evaluated at Legendre quadrature points - Aqv.  The
-;  evaluation stops when the number of terms exceeds the number of
-;  quadrature points or when the absolute value of the Legendre
-;  coefficient is less than E-5.
+; Expands function as a Legendre series.  The function is assumed to have been
+; evaluated at Legendre quadrature points - Aqv.  The evaluation stops when the
+; number of terms exceeds the number of quadrature points or when the absolute
+; value of the Legendre coefficient is less than E-5.
 ;
-;  Converted from the "Alegpexp" fortran subroutine writen by Don
-;  Grainger
+; Converted from the "Alegpexp" fortran subroutine writen by Don Grainger.
 ;
-;  Inp   = number of points
-;  qv    = Legendre point
-;  qw    = Legendre weight
-;  phase = Input (phase) function
-;  lc    = Legendre coefficients
-;  lpnm, lpnm, lpn = Legendre polynomials
+; Inp   = number of points
+; qv    = Legendre point
+; qw    = Legendre weight
+; phase = Input (phase) function
+; lc    = Legendre coefficients
+; lpnm, lpnm, lpn = Legendre polynomials
 
 ;   Imaxnp = 1100
     Imaxnp = 20000

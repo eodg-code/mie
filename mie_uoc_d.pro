@@ -3,8 +3,8 @@
 ;     MIE_UOC_D
 ;
 ; PURPOSE:
-;     Calculates the scattering parameters of a series of particles
-;     using the Mie scattering theory.
+;     Calculates the scattering parameters of a series of particles using the
+;     Mie scattering theory.
 ;
 ; CATEGORY:
 ;     EODG Mie routines
@@ -18,19 +18,19 @@
 ;     Cm:   The complex refractive index of the partilces
 ;     Inp:  Number of scattering angles at which to calculate intensity
 ;           functions etc
-;     Dqv:  The cosine of the scattering angles at which to calculate
-;           the intensity functions etc
+;     Dqv:  The cosine of the scattering angles at which to calculate the
+;           intensity functions etc
 ;
 ; KEYWORD PARAMETERS:
 ;
 ; OUTPUTS:
-;     Xs1:  The first amplitude function - amplitude of light polarised
-;           in the plane perpendicular to the directions of inicident
-;           light propogation and observation.
-;     Xs2:  The second amplitude function - amplitude of light polarised
-;           in the plane parallel to the directions of inicident light
-;           propogation and observation. NB. Xs1 and Xs2 are complex
-;           arrays of the same dimension as Dqv
+;     Xs1:  The first amplitude function - amplitude of light polarised in the
+;           plane perpendicular to the directions of inicident light propogation
+;           and observation.
+;     Xs2:  The second amplitude function - amplitude of light polarised in the
+;           plane parallel to the directions of inicident light propogation and
+;           observation. NB. Xs1 and Xs2 are complex arrays of the same
+;           dimension as Dqv
 ;     Dqxt: The extinction efficiency
 ;     Dqsc: The scattering efficiency
 ;     Dg:   The asymetry parameter
@@ -43,10 +43,10 @@
 ; RESTRICTIONS:
 ;
 ; MODIFICATION HISTORY:
-;       G. Thomas, 1998: mie_uoc.pro (translation of mieint.f to IDL)
-;       D. Grainger, 2001: mie_uoc_d.pro (Added support for arrays of
-;           particle sizes and included calculation of phase function)
-;       G. Thomas, Sept 2003: (Put into EODG routines format)
+;     G. Thomas, 1998: mie_uoc.pro (translation of mieint.f to IDL)
+;     D. Grainger, 2001: mie_uoc_d.pro (Added support for arrays of particle
+;        sizes and included calculation of phase function)
+;     G. Thomas, Sept 2003: (Put into EODG routines format)
 ;-
 
 pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
@@ -122,8 +122,8 @@ pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
       Dqxt(Size) = Tnp1 *      DOUBLE(A + B)          + Dqxt(Size)
       Dqsc(Size) = Tnp1 * DOUBLE(A*CONJ(A) + B*CONJ(B)) + Dqsc(Size)
       if (N GT 1) then Dg(Size) = Dg(Size) $
-                            + (dN*dN - 1) * DOUBLE(ANM1*CONJ(A) + BNM1 * CONJ(B)) / dN $
-                            + TNM1 * DOUBLE(ANM1*CONJ(BNM1)) / (dN*dN - dN)
+                           + (dN*dN - 1) * DOUBLE(ANM1*CONJ(A) + BNM1 * CONJ(B)) / dN $
+                           + TNM1 * DOUBLE(ANM1*CONJ(BNM1)) / (dN*dN - dN)
       Anm1 = A
       Bnm1 = B
 
@@ -149,7 +149,8 @@ pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
 
     Xs1(*,Size) = (Sp + Sm) / 2
     Xs2(*,Size) = (Sp - Sm) / 2
-    Dph(*,Size) = 2 * DOUBLE(Xs1(*,Size)*CONJ(Xs1(*,Size)) + Xs2(*,Size)*CONJ(Xs2(*,Size))) / (Dx(Size)^2 * Dqsc(Size))
+    Dph(*,Size) = 2 * DOUBLE(Xs1(*,Size)*CONJ(Xs1(*,Size)) + $
+                             Xs2(*,Size)*CONJ(Xs2(*,Size))) / (Dx(Size)^2 * Dqsc(Size))
     Dqbk(Size) =  4 * ABS(Xs1(Inp-1)^2) / Dx(Size)^2
   end
 

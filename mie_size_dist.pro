@@ -3,8 +3,8 @@
 ;     mie_size_dist
 ;
 ; PURPOSE:
-;     Calculates the scattering parameters of a log normal distribution
-;     of spherical particles.
+;     Calculates the scattering parameters of a log normal distribution of
+;     spherical particles.
 ;
 ; CATEGORY:
 ;     EODG Mie routines
@@ -12,8 +12,8 @@
 ; CALLING SEQUENCE:
 ;
 ; INPUTS:
-;     distname    Name of the size distribution. 'modified_gamma'
-;                 according to Hansen and Travis 1974 or 'log_normal'.
+;     distname    Name of the size distribution. 'modified_gamma' according to
+;                 Hansen and Travis 1974 or 'log_normal'.
 ;     Nd:         Number density of the particle distribution
 ;     params:     Array of size distribution parameters
 ;                 distname eq 'modified_gamma'
@@ -22,56 +22,50 @@
 ;                     params[2] : minimum radius in the distribuion
 ;                     params[3] : maximum radius in the distribuion
 ;                 distname eq 'log_normal'
-;                     params[0] : Median radius of the particle
-;                                 distribution
-;                     params[1] : The spread of the distribution, such
-;                                 that the standard deviation of ln(r)
-;                                 is ln(S)
-;     Wavenumber: Wavenumber of light (units must match units of the
-;                 size distribution)
+;                     params[0] : Median radius of the particle distribution
+;                     params[1] : The spread of the distribution, such that the
+;                                 standard deviation of ln(r) is ln(S)
+;     Wavenumber: Wavenumber of light (units must match units of the size
+;                 distribution)
 ;     Cm:         Complex refractive index
 ;
 ; KEYWORD PARAMETERS:
-;     Dqv:        An array of the cosines of scattering angles at which
-;                 to compute the phase function.
-;     dlm:        If set the IDL DLM version of the Mie scattering
-;                 procedure will be called rather than the IDL coded
-;                 version.
-;     npts:       Allows the user to override the automatically
-;                 calculated number of quadrature points for the
-;                 integration over size. NOTE: reducing the number of
-;                 abscissa can substantially decrease the accuracy of
-;                 the result - BE CAREFUL!!!!
-;     xres:       Sets the spacing of the quadrature points (in size
-;                 parameter). Overridden by npts. Default is 0.1. The
-;                 same warning as npts applies here!
-;     info:       Named variable that, on return, will contain a
-;                 structure containing the number of abscissa points
-;                 and the maximum and minimum size parameters used.
-;     mthread:    Controls the number of threads which will be utilised
-;                 by the DLM version of the algorithm. If not set by
-;                 default the code will use 1 thread. The behaviour of
-;                 the code for different values of this keyword is as
-;                 follows:
+;     Dqv:        An array of the cosines of scattering angles at which to
+;                 compute the phase function.
+;     dlm:        If set the IDL DLM version of the Mie scattering procedure
+;                 will be called rather than the IDL coded version.
+;     npts:       Allows the user to override the automatically calculated
+;                 number of quadrature points for the integration over size.
+;                 NOTE: reducing the number of abscissa can substantially
+;                 decrease the accuracy of the result - BE CAREFUL!!!!
+;     xres:       Sets the spacing of the quadrature points (in size parameter).
+;                 Overridden by npts. Default is 0.1. The same warning as npts
+;                 applies here!
+;     info:       Named variable that, on return, will contain a structure
+;                 containing the number of abscissa points and the maximum and
+;                 minimum size parameters used.
+;     mthread:    Controls the number of threads which will be utilised by the
+;                 DLM version of the algorithm. If not set by default the code
+;                 will use 1 thread. The behaviour of the code for different
+;                 values of this keyword is as follows:
 ;                 mthread<=0 : !CPU.TPOOL_NTHREADS
-;                 mthread> 0 : Code will utilise the number of threads
-;                              specified by mthread.
-;                 * BE AWARE * : Adding more threads than the number of
-;                   physical cores (hyperthreads do not count as
-;                   physical cores) on the system will not speed up the
-;                   calculation.
+;                 mthread> 0 : Code will utilise the number of threads specified
+;                              by mthread.
+;                 * BE AWARE * : Adding more threads than the number of physical
+;                   cores (hyperthreads do not count as physical cores) on the
+;                   system will not speed up the calculation.
 ;
-;                 *HAS NO EFFECT UNLESS dlm IS ALSO SET*
+;                 * HAS NO EFFECT UNLESS dlm IS ALSO SET*
 ;
 ; OUTPUTS:
 ;     Bext:       The extinction coefficient
 ;     Bsca:       The scattering coefficient
 ;     w:          The single scatter albedo
 ;     g:          The asymmetry parameter
-;     SPM:        The scattering phase matrix elements F11 (SPM[0,*]),
-;                 F33 (SPM[1,*]), F12 (SPM[2,*]), F34 (SPM[3,*]), where
-;                 the 2nd dimentsion is the same dimension as Dqv. Also
-;                 only calculated if Dqv is specified.
+;     SPM:        The scattering phase matrix elements F11 (SPM[0,*]), F33
+;                 (SPM[1,*]), F12 (SPM[2,*]), F34 (SPM[3,*]), where the 2nd
+;                 dimension is the same dimension as Dqv. Also only calculated
+;                 if Dqv is specified.
 ;
 ; OPTIONAL OUTPUTS:
 ;
@@ -83,52 +77,49 @@
 ;     RVW:        The volume-weighted average radius
 ;
 ; RESTRICTIONS:
-;     Note, this procedure calls the MIE_SINGLE (or MIE_DLM_SINGLE),
-;     QUADRATURE and SHIFT_QUADRATURE procedures.
+;     Note, this procedure calls the MIE_SINGLE (or MIE_DLM_SINGLE), QUADRATURE
+;     and SHIFT_QUADRATURE procedures.
 ;
 ; MODIFICATION HISTORY:
-;     G. Thomas, Sep 2003: (based on mie.pro written by Don Grainger)
-;     G. Thomas, Nov 2003: minor bug fixes
+;     G. Thomas, Sep 2003: Based on mie.pro written by Don Grainger.
+;     G. Thomas, Nov 2003: Minor bug fixes
 ;     G. Thomas, Feb 2004: Explicit double precision added throughout.
 ;     G. Thomas, Apr 2005: DLM keyword added to enable the use of
-;         mie_dlm_single
-;     RGG        Jun 2005: Implemented 0.1 step size in X and trapezium
+;         mie_dlm_single.
+;     R. Grainger, Jun 2005: Implemented 0.1 step size in X and trapezium
 ;         quadrature
-;     G. Thomas, Jun 2005: Added calculation of the phase function after
-;         calling mie_dlm_single, as the DLM no longer returns it.
-;         Changed "size" to "Dx" (as size is a IDL keyword!). Also added
-;         npts and info keywords.
-;     RGG,       8 Jun 2005: Slight modification of code.
+;     G. Thomas, Jun 2005: Added calculation of the phase function after calling
+;         mie_dlm_single, as the DLM no longer returns it. Changed "size" to
+;         "Dx" (as size is a IDL keyword!). Also added npts and info keywords.
+;     R. Grainger, 8 Jun 2005: Slight modification of code.
 ;     G. Thomas, 9 Jun 2005: Added xres keyword
-;     A. Smith,  6 Jul 2009: Added backscatter coefficient and +ve cm
-;         warning.
+;     A. Smith,  6 Jul 2009: Added backscatter coefficient and +ve cm warning.
 ;     G. Thomas, 21 Jul 2011: Added mthread keyword, to make use of the
 ;         parallelised version of the Mie DLM code
-;     G. Thomas, 22 Jul 2011: Can't get parallelised mie DLM to work
-;         correctly; S1 and S2 arrays corrupted in the Fortran. Giving
-;         up - mthread keyword code commented out
-;     G. Thomas, 12 Jun 2012: "Bug" (more an IDL language "feature"
-;         really) fix: If the number density was passed as a single
-;         element array, size distribution was being truncated to
-;         smallest size.
-;     G. McGarragh, 29 Jul 2015: Added initial support for additional
-;         size distributions starting with the gamma distribution as
-;         defined in Hansen and Travis 1974.
-;     G. McGarragh, 29 Jul 2015: Changed scattering phase function
-;         output to scattering phase matrix output.
-;     G. McGarragh, 29 Jul 2015: DLM output of the phase matrix SPM was
-;         fixed so no need to calculate it here any more.
-;     G. McGarragh, 29 Jul 2015: Added support to optionally output
-;         several geometric parameters averaged over the size
-;         distribution including Gavg, Vavg, Ravg, and RVW.
-;     G. McGarragh, 10 Dec 2015: Better naming of size distributions:
-;         gamma -> modified_gamma and lognormal -> log_normal.
+;     G. Thomas, 22 Jul 2011: Can't get parallelised mie DLM to work correctly;
+;         S1 and S2 arrays corrupted in the Fortran. Giving up - mthread keyword
+;         code commented out
+;     G. Thomas, 12 Jun 2012: "Bug" (more an IDL language "feature" really) fix:
+;         If the number density was passed as a single element array, size
+;         distribution was being truncated to smallest size.
+;     G. McGarragh, 29 Jul 2015: Added initial support for additional size
+;         distributions starting with the gamma distribution as defined in
+;         Hansen and Travis 1974.
+;     G. McGarragh, 29 Jul 2015: Changed scattering phase function output to
+;         scattering phase matrix output.
+;     G. McGarragh, 29 Jul 2015: DLM output of the phase matrix SPM was fixed so
+;         no need to calculate it here any more.
+;     G. McGarragh, 29 Jul 2015: Added support to optionally output several
+;         geometric parameters averaged over the size distribution including
+;         Gavg, Vavg, Ravg, and RVW.
+;     G. McGarragh, 10 Dec 2015: Better naming of size distributions: gamma ->
+;         modified_gamma and lognormal -> log_normal.
 ;-
 
-pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
-                   dlm=dlm, npts=npts, xres=xres, info=info, $
-                   mthread=mthread, Bext, Bsca, w, g, SPM, Bbac=Bbac, $
-                   Gavg=Gavg, Vavg=Vavg, Ravg=Ravg, RVW=RVW
+pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
+                   npts=npts, xres=xres, info=info, mthread=mthread, Bext, $
+                   Bsca, w, g, SPM, Bbac=Bbac, Gavg=Gavg, Vavg=Vavg, Ravg=Ravg, $
+                   RVW=RVW
 
     Common mieln, absc, wght
 
@@ -158,9 +149,9 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
     endif
 
     if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
-        message, /continue,'Warning: Imaginary part of refractive index '+$
-            'should be negative for absorbing particles. '+$
-            'Set /silent to hide this message.'
+        message, /continue,'Warning: Imaginary part of refractive index '+ $
+            'should be negative for absorbing particles. Set /silent to '+ $
+            'hide this message.'
 
     if not keyword_set(xres) then xres = 0.1
 
@@ -179,7 +170,7 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
               exp(-R / (params[0] * params[1]))
     endif else if distname eq 'log_normal' then begin
         W1P = W1 * Nd[0] / (sqrt(2D0) * sqrt(!dpi) * R * ALOG(params[1])) * $
-              EXP(-0.5D0*(ALOG(R/params[0]) / ALOG(params[1]))^2)
+              exp(-0.5D0*(ALOG(R/params[0]) / ALOG(params[1]))^2)
     endif
 
     Dx = 2D0 * !dpi * R * Wavenumber
@@ -200,15 +191,15 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
             endif else mthrd = 1
             DCm = dcomplex(Cm) ; Ensure the inputs are double precision
             DDqv = double(Dqv)
-            Mie_dlm_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
-                            Xs1, Xs2, F11, F33, F12, F34 ;, mthread=mthrd
+            Mie_dlm_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, Xs1, Xs2, $
+                            F11, F33, F12, F34 ;, mthread=mthrd
             DSPM = dblarr(4,Inp,Npts)
             DSPM[0,*,*] = F11
             DSPM[1,*,*] = F33
             DSPM[2,*,*] = F12
             DSPM[3,*,*] = F34
-;           Mie_dlm_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
-;                           Xs1, Xs2 ;, mthread=mthrd
+;           Mie_dlm_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, Xs1, Xs2 ; $
+;                           ;, mthread=mthrd
 ;           Cannot get the DLM to return the phase matrix. Very misterious...
 ;           So must calculate the elements of DSPM below.
 ;           DSPM = dblarr(4,Inp,Npts)
@@ -230,10 +221,10 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, $
                 if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
                 else mthrd = mthread
             endif else mthrd = 1
-            DCm = dcomplex(Cm)   ; Ensure the inputs are double precision
+            DCm = dcomplex(Cm) ; Ensure the inputs are double precision
             DDqv = double(Dqv)
-            Mie_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, $
-                        Xs1, Xs2, DSPM ;, mthread=mthrd
+            Mie_single, Dx, DCm, Dqv=DDqv, Dqxt, Dqsc, Dqbk, Dg, Xs1, Xs2, $
+                        DSPM ;, mthread=mthrd
         endelse
     endif else begin
         if keyword_set(dlm) then begin

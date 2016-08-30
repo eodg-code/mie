@@ -15,9 +15,9 @@ End ; Function BesselZero
 Function FirstGuess, QuadType, N, Term
 
     Case strupcase(Quadtype) of
-        'G': FG = cos(!dpi *(term-0.25d0)/(n+0.5d0))
-        'R': FG = (cos(!dpi *(term-0.25d0)/(n+0.5d0)) + cos(!dpi *(term-0.25d0)/(n-0.5d0))) / 2
-        'L': FG = cos(BesselZero(term)/sqrt((n-0.5d0)^2 + (0.25d0 - 1d0/!pi^2)))
+    'G': FG = cos(!dpi *(term-0.25d0)/(n+0.5d0))
+    'R': FG = (cos(!dpi *(term-0.25d0)/(n+0.5d0)) + cos(!dpi *(term-0.25d0)/(n-0.5d0))) / 2
+    'L': FG = cos(BesselZero(term)/sqrt((n-0.5d0)^2 + (0.25d0 - 1d0/!pi^2)))
     EndCase
     Return, FG
 End ; Function FirstGuess
@@ -25,39 +25,39 @@ End ; Function FirstGuess
 Function NewtonG, QuadType, N, X
 
     Case strupcase(Quadtype) of
-        'G': begin
-            Legendre, n, x, Pl, Pm, Pn
-            Nwt = (1d0 - x^2)*Pn / (double(n) * (Pm - x*Pn))
-        End
-        'R': begin
-            Legendre, n, x, Pl, Pm, Pn
-            Nwt = (1d0 + x)*(Pm+Pn) / ( ((n-1)*Pl - (n-1)*x*Pm +n*Pm - n*x*Pn)/(1-x) - (Pm+Pn) )
-        End
-        'L': begin
-            Legendre, n-1, x, Pl, Pm, Pn
-            Nwt = (1d0 - x^2)*(Pm-x*Pn) / (n*Pl + 2d0*(1d0-n)* x * Pm + (x^2*(n-1d0) - 1d0)*Pn)
-        End
+    'G': begin
+        Legendre, n, x, Pl, Pm, Pn
+        Nwt = (1d0 - x^2)*Pn / (double(n) * (Pm - x*Pn))
+    End
+    'R': begin
+        Legendre, n, x, Pl, Pm, Pn
+        Nwt = (1d0 + x)*(Pm+Pn) / ( ((n-1)*Pl - (n-1)*x*Pm +n*Pm - n*x*Pn)/(1-x) - (Pm+Pn) )
+    End
+    'L': begin
+        Legendre, n-1, x, Pl, Pm, Pn
+        Nwt = (1d0 - x^2)*(Pm-x*Pn) / (n*Pl + 2d0*(1d0-n)* x * Pm + (x^2*(n-1d0) - 1d0)*Pn)
+    End
     EndCase
     Return, Nwt
 End ; Function Newton
 
 Pro Legendre, nn, x, Pl, Pm, Pn
-  Case NN of
+    Case NN of
     0: Pn = 1D0 ; Pl and Pm are undefined
     1: Begin    ; Pl is undefined
-       Pm = 1D0
-       Pn = X
-     End
+        Pm = 1D0
+        Pn = X
+    End
     Else: Begin ; NN  >= 2
-      Pl = 1d0  ; value doesn't matter
-      Pm = 1d0
-      Pn = x
-      for n = 2,nn do begin
-        in = 1d0/double(n)
-        Pl = Pm
-        Pm = Pn
-        Pn = (2d0-in) * x * Pm - (1d0-in) * Pl
-      Endfor
+        Pl = 1d0  ; value doesn't matter
+        Pm = 1d0
+        Pn = x
+        for n = 2,nn do begin
+            in = 1d0/double(n)
+            Pl = Pm
+            Pm = Pn
+            Pn = (2d0-in) * x * Pm - (1d0-in) * Pl
+        Endfor
     EndElse
     EndCase
     Return
@@ -67,7 +67,8 @@ End ; Procedure Legrendre
 ; Begin main subroutine
 
 Pro Quadrature, Quadtype, NPts, Abscissa, Weight
-; Assign N abscissa and weights for integration on the interval [-1,1] for a variety of quadrature types
+; Assign N abscissa and weights for integration on the interval [-1,1] for a
+; variety of quadrature types:
 ; S Simpson's
 ; T Trapezium
 ; G Gaussian
@@ -75,71 +76,70 @@ Pro Quadrature, Quadtype, NPts, Abscissa, Weight
 ; L Lobarto
 ; HISTORY
 ; RGG  7 Jun 2005 : Enlarged from GET's translation of RGG FORTRAN
-; GET 10 Jun 2005 : Fixed Trapezium quadrature (it was providing results
-;                   which were a factor of 2 too small).
+; GET 10 Jun 2005 : Fixed Trapezium quadrature (it was providing results which
+;     were a factor of 2 too small).
 
+    N = Double(NPts)        ; Double version of Npts
+    Abscissa = dblarr(NPts) ;Quadrature points
+    Weight   = dblarr(NPts) ;and weights
+    Sigfig   = 14           ;Minimum precision of Double data type in IDL
 
-  N = Double(NPts)        ; Double version of Npts
-  Abscissa = dblarr(NPts) ;Quadrature points
-  Weight   = dblarr(NPts) ;and weights
-  Sigfig   = 14           ;Minimum precision of Double data type in IDL
-
-  Case strupcase(Quadtype) of
-  'T': begin
-    Abscissa       = -1D0+2*Dindgen(NPts)/(N-1)
-    Weight(*)      =  2D0/(N-1)
-    Weight(0)      =  1D0/(N-1)
-    Weight(Npts-1) =  1D0/(N-1)
-    Zeros = 1     ; Prevents unnecessary calculation of Legendre moments etc.
-  End
-  'S': begin
-    Stop,'Simpson Method not yet implemented, sorry'
-    ;If (Npts Mod 2  Eq 0) Then stop,'Error in quadrature:N must be even',N
-  End
-  Else: begin
-    If (NPts gt 2000) then  Stop,'Error in quadrature: Too many quadrature points',n
     Case strupcase(Quadtype) of
-    'G': begin
-      Term = 0
-      Zeros = NPts
+    'T': begin
+        Abscissa       = -1D0+2*Dindgen(NPts)/(N-1)
+        Weight(*)      =  2D0/(N-1)
+        Weight(0)      =  1D0/(N-1)
+        Weight(Npts-1) =  1D0/(N-1)
+        Zeros = 1     ; Prevents unnecessary calculation of Legendre moments etc.
     End
-    'R': begin
-      Abscissa(Npts-1) = -1D0
-      Weight(NPts-1)   =  2D0/(N*N)
-      Term  = 0
-      Zeros = Npts-1
+    'S': begin
+        Stop,'Simpson Method not yet implemented, sorry'
+;       If (Npts Mod 2  Eq 0) Then stop,'Error in quadrature:N must be even',N
     End
-    'L': begin
-      Abscissa(0) = 1
-      Weight(0) = 2d0/(n*(n-1))
-      Abscissa(NPts-1) = -1
-      Weight(NPts-1) = 2d0/(n*(n-1))
-      Term = 1
-      Zeros = NPts-2
-    End
-    else: Stop,'Error in quadrature: Invalid quadrature type'
-    Endcase
+    Else: begin
+        If (NPts gt 2000) then  Stop,'Error in quadrature: Too many quadrature points',n
+        Case strupcase(Quadtype) of
+        'G': begin
+          Term = 0
+          Zeros = NPts
+        End
+        'R': begin
+          Abscissa(Npts-1) = -1D0
+          Weight(NPts-1)   =  2D0/(N*N)
+          Term  = 0
+          Zeros = Npts-1
+        End
+        'L': begin
+          Abscissa(0) = 1
+          Weight(0) = 2d0/(n*(n-1))
+          Abscissa(NPts-1) = -1
+          Weight(NPts-1) = 2d0/(n*(n-1))
+          Term = 1
+          Zeros = NPts-2
+        End
+        else: Stop,'Error in quadrature: Invalid quadrature type'
+        Endcase
 
-    for Zero=1,Zeros do begin
-      lx = 19262d0   ; Any number, Don's birthday apparently.
-      x = Firstguess(QuadType,NPts,Zero)
-      while abs(x - lx) gt 1d1^(-SigFig) do begin
-        lx = x
-        x = x - NewtonG(QuadType,NPts,x)
-      endwhile
-      Abscissa(Term)=x
-      Legendre,n,x,Pl,Pm,Pn
-      Case strupcase(Quadtype) of
-      'G': Weight(Term) = 2d0 * (1d0-X*X) / (N*Pm)^2
-      'R': Weight(Term) = (1d0-x) / (n*Pm)^2
-      'L': Weight(Term) = 2d0 / (double(n*(n-1))*Pm^2)
-      Endcase
-      Term = Term + 1
-    endfor
-    Abscissa = Reverse(Abscissa)
-    Weight = Reverse(Weight)
-  Endelse
-  EndCase
+        for Zero=1,Zeros do begin
+            lx = 19262d0   ; Any number, Don's birthday apparently.
+            x = Firstguess(QuadType,NPts,Zero)
+            while abs(x - lx) gt 1d1^(-SigFig) do begin
+              lx = x
+              x = x - NewtonG(QuadType,NPts,x)
+            endwhile
+            Abscissa(Term)=x
+            Legendre,n,x,Pl,Pm,Pn
+            Case strupcase(Quadtype) of
+            'G': Weight(Term) = 2d0 * (1d0-X*X) / (N*Pm)^2
+            'R': Weight(Term) = (1d0-x) / (n*Pm)^2
+            'L': Weight(Term) = 2d0 / (double(n*(n-1))*Pm^2)
+            Endcase
+            Term = Term + 1
+        endfor
+        Abscissa = Reverse(Abscissa)
+        Weight = Reverse(Weight)
+    Endelse
+    EndCase
 
-  Return
+    Return
 End ; Of main procedure Quadrature

@@ -3,8 +3,8 @@
 ;     mie_single
 ;
 ; PURPOSE:
-;     Calculates the scattering parameters of a series of particles
-;     using the Mie scattering theory.
+;     Calculates the scattering parameters of a series of particles using the
+;     Mie scattering theory.
 ;
 ; CATEGORY:
 ;     EODG Mie routines
@@ -21,89 +21,82 @@
 ; OPTIONAL INPUTS:
 ;
 ; KEYWORD PARAMETERS:
-;     dqv:        An array of the cosines of scattering angles at which
-;                 to compute the phase function.
-;     dlm:        If set the code will call the IDL DLM version of the
-;                 algorithm
-;     silent:     If set all warning messages issued by the code will be
-;                 suppressed.
-;     mthread:    Controls the number of threads which will be utilised
-;                 by the DLM version of the algorithm. If not set by
-;                 default the code will use 1 thread. The behaviour of
-;                 the code for different values of this keyword is as
-;                 follows:
-;                 mthread<=0 : !CPU.TPOOL_NTHREADS
-;                 mthread> 0 : Code will utilise the number of threads
-;                              specified by mthread.
-;                 * BE AWARE * : Adding more threads than the number of
-;                   physical cores (hyperthreads do not count as
-;                   physical cores) on the system will not speed up the
-;                   calculation.
+;     dqv:     An array of the cosines of scattering angles at which to compute
+;              the phase function.
+;     dlm:     If set the code will call the IDL DLM version of the algorithm.
+;     silent:  If set all warning messages issued by the code will be suppressed.
+;     mthread: Controls the number of threads which will be utilised by the DLM
+;              version of the algorithm. If not set by default the code will use
+;              1 thread. The behaviour of the code for different values of this
+;              keyword is as follows:
+;              mthread<=0 : !CPU.TPOOL_NTHREADS
+;              mthread> 0 : Code will utilise the number of threads specified by
+;                           mthread.
+;              * BE AWARE * : Adding more threads than the number of physical
+;                cores (hyperthreads do not count as physical cores) on the
+;                system will not speed up the calculation.
 ;
-;                 *HAS NO EFFECT UNLESS dlm IS ALSO SET*
+;              * HAS NO EFFECT UNLESS dlm IS ALSO SET*
 ;
 ; OUTPUTS:
-;       Dqxt:     The extinction efficiency
-;       Dqsc:     The scattering efficiency
-;       Dqbk:     The backscattering efficiency
-;       Dg:       The asymmetry parameter
-;       Xs1:      The first amplitude function - amplitude of light
-;                 polarized in the plane perpendicular to the
-;                 directions of incident light propagation and
-;                 observation.
-;       Xs2:      The second amplitude function - amplitude of light
-;                 polarized in the plane parallel to the directions
-;                 of incident light propagation and observation.
-;                 NB. Xs1 and Xs2 are complex arrays of the same
-;                 dimension as Dqv and are only calculated if Dqv is
-;                 specified.
-;       SPM:      The scattering phase matrix elements F11 (SPM[0,*,*]),
-;                 F33 (SPM[1,*,*]), F12 (SPM[2,*,*]), F34 (SPM[3,*,*]),
-;                 where the 2nd dimentsion is the same dimension as
-;                 Dqv and the 3rd dimension is the same dimension as Dx.
-;                 Also only calculated if Dqv is specified.
+;     Dqxt:    The extinction efficiency
+;     Dqsc:    The scattering efficiency
+;     Dqbk:    The backscattering efficiency
+;     Dg:      The asymmetry parameter
+;     Xs1:     The first amplitude function - amplitude of light polarized in
+;              the plane perpendicular to the directions of incident light
+;              propagation and observation.
+;     Xs2:     The second amplitude function - amplitude of light polarized in
+;              the plane parallel to the directions of incident light
+;              propagation and observation. NB. Xs1 and Xs2 are complex arrays
+;              of the same dimension as Dqv and are only calculated if Dqv is
+;              specified.
+;     SPM:     The scattering phase matrix elements F11 (SPM[0,*,*]), F33
+;              (SPM[1,*,*]), F12 (SPM[2,*,*]), F34 (SPM[3,*,*]), where the 2nd
+;              dimentsion is the same dimension as Dqv and the 3rd dimension is
+;              the same dimension as Dx. Also only calculated if Dqv is
+;              specified.
 ;
 ; OPTIONAL OUTPUTS:
 ;
 ; KEYWORD OUTPUTS:
 ;
 ; RESTRICTIONS:
-;     The backscatter efficiency differs by 4 pi from the standard
-;     definition. The user is directed to Bohren and Huffman -
-;     Absorption and Scattering of Light by Small Particles (Wiley-VCH
-;     1983) - Sec 4.6: "Radar Backscattering Cross Section".
+;     The backscatter efficiency differs by 4 pi from the standard definition.
+;     The user is directed to Bohren and Huffman - Absorption and Scattering of
+;     Light by Small Particles (Wiley-VCH 1983) - Sec 4.6: "Radar Backscattering
+;     Cross Section".
 ;
 ; MODIFICATION HISTORY:
 ;     G. Thomas, 1998: mie_uoc.pro (translation of mieint.f to IDL)
-;     D. Grainger, 2001: mie_uoc_d.pro (Added support for arrays of
-;         particle sizes and included calculation of phase function)
+;     D. Grainger, 2001: mie_uoc_d.pro (Added support for arrays of particle
+;         sizes and included calculation of phase function)
 ;     G. Thomas, Sep 2003: (Put into EODG routines format)
-;     G. Thomas, Feb 2004: (Introduced explicit double precision
-;         numerical values into all computational expressions)
+;     G. Thomas, Feb 2004: (Introduced explicit double precision numerical
+;         values into all computational expressions)
 ;     G. Thomas, Apr 2005: (NmX assignment changed to type long)
 ;     G. Thomas, Apr 2005: (Added dlm keyword)
-;     G. Thomas, Apr 2005: (Changed code to ensure Qbsc is always
-;         calculated for the backscatter direction)
-;     G. Thomas, Jun 2005: (Added calculation of phase function after
-;         calling mie_dlm_single, since the DLM no longer returns it)
+;     G. Thomas, Apr 2005: (Changed code to ensure Qbsc is always calculated for
+;         the backscatter direction)
+;     G. Thomas, Jun 2005: (Added calculation of phase function after calling
+;         mie_dlm_single, since the DLM no longer returns it)
 ;     G. Thomas, Nov 2006: (Changed the calculation of the backscatter
-;         efficiency to be done directly from the A and B values, rather
-;         than from the intensity at 180 degrees. Also, fixed a small
-;         bug with passing Dqv to the DLM)
+;         efficiency to be done directly from the A and B values, rather than
+;         from the intensity at 180 degrees. Also, fixed a small bug with
+;         passing Dqv to the DLM)
 ;     A. Smith, 12 Oct 2007: (Fixed bug in non-DLM calculation of Dph)
-;     G. Thomas, Jun 2007: (Bug fix in calculation of backscatter
-;         efficiency)
+;     G. Thomas, Jun 2007: (Bug fix in calculation of backscatter efficiency)
 ;     A. Smith, Nov 2008: (Added warning message for +ve Cm )
 ;     G. Thomas, Jul 2011: (Added mthread keyword, to make use of the
 ;         parallelised version of the Mie DLM code)
-;     G. Thomas, Jul 2011: (Can't get parallelised mie DLM to work
-;         correctly; S1 and S2 arrays corrupted in the Fortran. Giving
-;         up - mthread keyword code commented out)
+;     G. Thomas, Jul 2011: (Can't get parallelised mie DLM to work correctly;
+;         S1 and S2 arrays corrupted in the Fortran. Giving up - mthread keyword
+;         code commented out)
 ;     G. Thomas, Aug 2012 (Another bug fix to backscatter efficiency)
-;     G. McGarragh, 29 Jul 2015 (Changed scattering phase function
-;         output to scattering phase matrix output.)
-;     G. McGarragh, 29 Jul 2015 (DLM output of the phase matrix SPM was
-;         fixed so no need to calculate it here any more.)
+;     G. McGarragh, 29 Jul 2015 (Changed scattering phase function output to
+;         scattering phase matrix output.)
+;     G. McGarragh, 29 Jul 2015 (DLM output of the phase matrix SPM was fixed so
+;         no need to calculate it here any more.)
 ;-
 
 pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
@@ -117,8 +110,8 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 
     if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
         message, /continue, 'Warning: Imaginary part of refractive index '+ $
-            'should be negative for absorbing particles. '+ $
-            'Set /silent to hide this message.'
+            'should be negative for absorbing particles. Set /silent to '+ $
+            'hide this message.'
 
     if keyword_set(dlm) then begin
 ;   If the dlm keyword is set, use the DLM version of the code

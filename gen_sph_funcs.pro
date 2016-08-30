@@ -3,9 +3,9 @@
 ;     gen_sph_funcs
 ;
 ; PURPOSE:
-;     Computes generalized spherical functions required for the required
-;     to expand a single scattering phase matrix in the form required by
-;     radiative transfer solvers such as VLIDORT or XRTM.
+;     Computes generalized spherical functions required for the required to
+;     expand a single scattering phase matrix in the form required by radiative
+;     transfer solvers such as VLIDORT or XRTM.
 ;
 ; CATEGORY:
 ;     EODG Mie routines
@@ -22,14 +22,10 @@
 ; KEYWORD PARAMETERS:
 ;
 ; OUTPUTS:
-;     p00:  2D array (n_elements(mu), n_l) of P^l_{0,0} values where l
-;           is order.
-;     p0p2: 2D array (n_elements(mu), n_l) of P^l_{0,2} values where l
-;           is order.
-;     p2p2: 2D array (n_elements(mu), n_l) of P^l_{2,2} values where l
-;           is order.
-;     p2m2: 2D array (n_elements(mu), n_l) of P^l_{2,-2} values where l
-;           is order.
+;     p00:  2D array (n_elements(mu), n_l) of P^l_{0,0} values where l is order.
+;     p0p2: 2D array (n_elements(mu), n_l) of P^l_{0,2} values where l is order.
+;     p2p2: 2D array (n_elements(mu), n_l) of P^l_{2,2} values where l is order.
+;     p2m2: 2D array (n_elements(mu), n_l) of P^l_{2,-2} values where l is order.
 ;
 ; OPTIONAL OUTPUTS:
 ;
@@ -38,8 +34,8 @@
 ; RESTRICTIONS:
 ;
 ; MODIFICATION HISTORY:
-;     G. McGarragh, 28 Jul 2015: Taken from LMie (google it) and
-;         translated from C.  Originally based on Mischenko 1991.
+;     G. McGarragh, 28 Jul 2015: Taken from LMie and translated from C.
+;         Originally based on Mischenko 1991.
 ;-
 
 pro gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2

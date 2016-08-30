@@ -4,9 +4,9 @@ pro scat_phase_matrix_exp, n_l, qx, qw, F, n_l2, coefs
 ;     scat_phase_matrix_exp
 ;
 ; PURPOSE:
-;     Expand the given single scattering phase matrix in terms of
-;     generalized spherical functions in the form required by radiative
-;     transfer solvers such as VLIDORT or XRTM.
+;     Expand the given single scattering phase matrix in terms of generalized
+;     spherical functions in the form required by radiative transfer solvers
+;     such as VLIDORT or XRTM.
 ;
 ; CATEGORY:
 ;     EODG Mie routines
@@ -15,13 +15,12 @@ pro scat_phase_matrix_exp, n_l, qx, qw, F, n_l2, coefs
 ;
 ; INPUTS:
 ;     n_l: Maximum order to compute.
-;     qx:  Array of quadrature points (scattering angle cosines) for
-;          the integration of the input scattering phase matrix F.
-;     qw:  Array of quadrature weights (sum(qw) = unity) for
-;          the integration of the input scattering phase matrix F.
-;          n_elements(qx) = n_elements(qx).
-;     F:   2D array (6, n_elements(qx)) of the elements of scattering
-;          phase matrix for each quadrature point where
+;     qx:  Array of quadrature points (scattering angle cosines) for the
+;          integration of the input scattering phase matrix F.
+;     qw:  Array of quadrature weights (sum(qw) = unity) for the integration of
+;          the input scattering phase matrix F. n_elements(qx) = n_elements(qx).
+;     F:   2D array (6, n_elements(qx)) of the elements of scattering phase
+;          matrix for each quadrature point where
 ;          F[1,*] = F11[*]
 ;          F[2,*] = F22[*]
 ;          F[3,*] = F33[*]
@@ -39,8 +38,7 @@ pro scat_phase_matrix_exp, n_l, qx, qw, F, n_l2, coefs
 ; RESTRICTIONS:
 
 ; MODIFICATION HISTORY:
-;     G. McGarragh, 28 Jul 2015: Taken from LMie (google it) and
-;         translated from C.
+;     G. McGarragh, 28 Jul 2015: Taken from LMie and translated from C.
 ;-
 
     n_q = n_elements(qx)
