@@ -53,7 +53,7 @@
 ;              specified.
 ;     SPM:     The scattering phase matrix elements F11 (SPM[0,*,*]), F33
 ;              (SPM[1,*,*]), F12 (SPM[2,*,*]), F34 (SPM[3,*,*]), where the 2nd
-;              dimentsion is the same dimension as Dqv and the 3rd dimension is
+;              dimension is the same dimension as Dqv and the 3rd dimension is
 ;              the same dimension as Dx. Also only calculated if Dqv is
 ;              specified.
 ;

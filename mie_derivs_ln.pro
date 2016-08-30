@@ -3,7 +3,7 @@
 ;     mie_derivs_ln
 ;
 ; PURPOSE:
-;     Calculates the scattering parameters and their analytical deritatives
+;     Calculates the scattering parameters and their analytical derivatives
 ;     (wrt the parameters of the distribution) of a log normal distribution of
 ;     spherical particles.
 ;
@@ -24,10 +24,10 @@
 ; INPUTS:
 ;     N:          The number density of the particle distribution
 ;     Rm:         Median radius of the particle distribution (microns)
-;     S:          The spread of the distribution, such that the stardard
+;     S:          The spread of the distribution, such that the standard
 ;                 deviation of ln(r) is ln(S)
 ;     Wavenumber: Wavenumber of light, defined as 1/wavelength. A positive
-;                 scalar whos units match those of Rm.
+;                 scalar whose units match those of Rm.
 ;     Cm:         Complex refractive index
 ;
 ; KEYWORD PARAMETERS:
@@ -46,12 +46,12 @@
 ;                 spread
 ;     i1:         The first intensity function - intensity of light polarised in
 ;                 the plane perpendicular to the directions
-;                 of inicident light propogation and observation. Only
-;                 caculated if dqv is specified.
+;                 of incident light propagation and observation. Only
+;                 calculated if dqv is specified.
 ;     i2:         The second intensity function - intensity of light polarised in
 ;                 the plane parallel to the directions of
-;                 inicident light propogation and observation. Only
-;                 caculated if dqv is specified.
+;                 incident light propagation and observation. Only
+;                 calculated if dqv is specified.
 ;     di1dN:      Derivatives of the first intensity function wrt the number density
 ;     di1dRm:     Derivatives of the first intensity function wrt the mean radius
 ;     di1dS:      Derivatives of the first intensity function wrt the spread
@@ -71,7 +71,7 @@
 ; MODIFICATION HISTORY:
 ;     G. Thomas, Sep 2003: mie_derivs_ln.pro
 ;     G. Thomas, Nov 2003: minor bug fixes
-;     G. Thomas, Feb 2004: Explicit double precission added throughout and
+;     G. Thomas, Feb 2004: Explicit double precision added throughout and
 ;         header updated quadrature. Also added npts and info keywords.
 ;-
 
@@ -91,7 +91,7 @@ pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, dBextdN,dBextdRm, $
     endif
 
     if not keyword_set(npts) then begin
-;      Accurate calulation requires 0.1 step size in x
+;      Accurate calculation requires 0.1 step size in x
        Npts = (Long(2D0 * !dpi * (ru-rl) * Wavenumber/0.1)) > 200
     endif
 

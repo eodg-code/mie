@@ -76,7 +76,7 @@
 ;
 ; MODIFICATION HISTORY:
 ;     J. Lucas, 2002: Main line programme
-;     D. Grainger, 2002: Procedure version of miederivs.pro
+;     D. Grainger, 2002: Procedure version
 ;     G. Thomas, Sep 2003: Put into EODG routines format
 ;     J. Graham (UC Berkeley), Feb 2004: Introduced explicit double precision
 ;         numerical values into all computational expressions.

@@ -5,7 +5,7 @@ pro legpexp,Inp,qv,qw,phase,Inlc,lc
 ; number of terms exceeds the number of quadrature points or when the absolute
 ; value of the Legendre coefficient is less than E-5.
 ;
-; Converted from the "Alegpexp" fortran subroutine writen by Don Grainger.
+; Converted from the "Alegpexp" fortran subroutine written by Don Grainger.
 ;
 ; Inp   = number of points
 ; qv    = Legendre point

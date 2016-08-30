@@ -15,7 +15,7 @@
 ;
 ; INPUTS:
 ;     Dx:   A 1D array of particle size parameters
-;     Cm:   The complex refractive index of the partilces
+;     Cm:   The complex refractive index of the particles
 ;     Inp:  Number of scattering angles at which to calculate intensity
 ;           functions etc
 ;     Dqv:  The cosine of the scattering angles at which to calculate the
@@ -25,15 +25,15 @@
 ;
 ; OUTPUTS:
 ;     Xs1:  The first amplitude function - amplitude of light polarised in the
-;           plane perpendicular to the directions of inicident light propogation
+;           plane perpendicular to the directions of incident light propagation
 ;           and observation.
 ;     Xs2:  The second amplitude function - amplitude of light polarised in the
-;           plane parallel to the directions of inicident light propogation and
+;           plane parallel to the directions of incident light propagation and
 ;           observation. NB. Xs1 and Xs2 are complex arrays of the same
 ;           dimension as Dqv
 ;     Dqxt: The extinction efficiency
 ;     Dqsc: The scattering efficiency
-;     Dg:   The asymetry parameter
+;     Dg:   The asymmetry parameter
 ;     Dph:  The phase function - an array of the same dimension as Dqv.
 ;
 ; OPTIONAL OUTPUTS:

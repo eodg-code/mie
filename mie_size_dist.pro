@@ -19,8 +19,8 @@
 ;                 distname eq 'modified_gamma'
 ;                     params[0] : a
 ;                     params[1] : b
-;                     params[2] : minimum radius in the distribuion
-;                     params[3] : maximum radius in the distribuion
+;                     params[2] : minimum radius in the distribution
+;                     params[3] : maximum radius in the distribution
 ;                 distname eq 'log_normal'
 ;                     params[0] : Median radius of the particle distribution
 ;                     params[1] : The spread of the distribution, such that the
@@ -156,7 +156,7 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
     if not keyword_set(xres) then xres = 0.1
 
     if not keyword_set(npts) then begin
-;       Accurate calulation requires 0.1 step size in x
+;       Accurate calculation requires 0.1 step size in x
         Npts = (Long(2D0 * !dpi * (ru-rl) * Wavenumber/xres)) > 200
     endif
 
