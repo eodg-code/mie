@@ -11,6 +11,7 @@
 ;     EODG Mie routines
 ;
 ; CALLING SEQUENCE:
+;     gen_sph_funcs, n_l, mu, p00, p0p2, p2p2, p2m2
 ;
 ; INPUTS:
 ;     n_l: Maximum order to compute.

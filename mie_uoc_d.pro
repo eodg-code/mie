@@ -10,18 +10,17 @@
 ;     EODG Mie routines
 ;
 ; CALLING SEQUENCE:
-;     mie_uoc_d, Dx, Cm, Inp, Dqv $
-;     [, Xs1] [, Xs2] [, Dqxt] [, Dqsc] [, Dqbk] [, Dg] [, Dph]
+;     mie_uoc_d, Dx, Cm, Dqv [, Inp=Inp] Xs1, Xs2, Dqxt, Dqsc, Dqbk, Dg, Dph
 ;
 ; INPUTS:
 ;     Dx:   A 1D array of particle size parameters
 ;     Cm:   The complex refractive index of the particles
-;     Inp:  Number of scattering angles at which to calculate intensity
-;           functions etc
 ;     Dqv:  The cosine of the scattering angles at which to calculate the
 ;           intensity functions etc
 ;
 ; KEYWORD PARAMETERS:
+;     Inp:  Number of scattering angles at which to calculate intensity
+;           functions etc (default = 1)
 ;
 ; OUTPUTS:
 ;     Xs1:  The first amplitude function - amplitude of light polarised in the
@@ -49,14 +48,14 @@
 ;     G. Thomas, Sept 2003: (Put into EODG routines format)
 ;-
 
-pro mie_uoc_d, Dx,Cm,Inp,Dqv,Xs1,Xs2,Dqxt,Dqsc,Dqbk,Dg,Dph
+pro mie_uoc_d, Dx, Cm, Dqv, Inp=Inp, Xs1, Xs2, Dqxt, Dqsc, Dqbk, Dg, Dph
 
   Imaxx = 12000
   RIMax = 2.5
   Itermax = Imaxx * RIMax
   Imaxnp = 1100 ; Change this as required
-  Sizes = N_Elements(Dx)
-  if (N_Elements(Inp) Eq 0) then begin
+  Sizes = n_elements(Dx)
+  if (keyword_set(Inp) then begin
     Inp = 1
     Dqv = 0
   endif

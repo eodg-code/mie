@@ -15,15 +15,13 @@
 ;     EODG Mie routines
 ;
 ; CALLING SEQUENCE:
-;     mie_derivs, x, Cm, Dqv $
-;     [, Qext] [, Qsca] [, dQextdx] [, dQextdRem] [, dQextdImm] $
-;     [, dQscadx] [, dQscadRem] [, dQscadImm] [, i1] [, i2] $
-;     [, di1dx] [, di2dx] [, di1dRem] [, di1dImm] [, di2dRem] [, di2dImm] $
-;     [, ASYM=asym] [, dASYMdx=dasymdx] [, dASYMdRem=dasymdrem] $
-;     [, dASYMdImm=dASYMdrem] [, /SILENT]
+;     mie_derivs, Dx, Cm, Dqv [, /SILENT], Qext, Qsca, dQextdx, dQextdRem, $
+;     dQextdImm, dQscadx, dQscadRem, dQscadImm, i1, i2, di1dx, di2dx, di1dRem, $
+;     di1dImm, di2dRem, di2dImm [, ASYM=ASYM] [, dASYMdx=dASYMdx] $
+;     [, dASYMdRem=dASYMdRem] [, dASYMdImm=dASYMdImm]
 ;
 ; INPUTS:
-;     x:         The particle size parameter
+;     Dx:        The particle size parameter
 ;     Cm:        The complex refractive index of the particle
 ;     Dqv:       The cosine of the scattering angles at which to calculate the
 ;                intensity functions etc
@@ -62,15 +60,15 @@
 ;     di2dImm:   to the real and imaginary parts of the refractive index
 ;
 ;     NB. The values of involving the intensity functions are arrays of the same
-;     dimension as dqv and are only calculated if dqv is specified.
+;     dimension as Dqv and are only calculated if Dqv is specified.
 ;
 ; OPTIONAL OUTPUTS:
 ;
 ; KEYWORD OUTPUTS:
-;     asym:      The asymmetry parameter.
-;     dasymdx:   Derivative of asymmetry wrt size parameter.
-;     dasymdRem: Derivative of asymmetry wrt real pt of RI.
-;     dasymdImm: Derivative of asymmetry wrt imag pt of RI.
+;     ASYM:      The asymmetry parameter.
+;     dASYMdx:   Derivative of asymmetry wrt size parameter.
+;     dASYMdRem: Derivative of asymmetry wrt real pt of RI.
+;     dASYMdImm: Derivative of asymmetry wrt imag pt of RI.
 ;
 ; RESTRICTIONS:
 ;
@@ -85,32 +83,29 @@
 ;     A. Smith, Apr 2013: Added asymmetry parameter.
 ;-
 
-pro mie_derivs, x,Cm,Dqv,Qext,Qsca, $
-                dQextdx,dQextdRem,dQextdImm, $
-                dQscadx,dQscadRem,dQscadImm, $
-                i1,i2,di1dx,di2dx,di1dRem,di1dImm,di2dRem,di2dImm, $
-                silent=silent, $
-                asym=asym,dasymdx=dasymdx, $
-                dasymdRem=dasymdRem,dasymdImm=dasymdImm
+pro mie_derivs, Dx, Cm, Dqv, SILENT=SILENT, Qext, Qsca, dQextdx, dQextdRem, $
+                dQextdImm, dQscadx, dQscadRem, dQscadImm, i1, i2, di1dx, di2dx, $
+                di1dRem, di1dImm, di2dRem, di2dImm, ASYM=ASYM, dASYMdx=dASYMdx, $
+                dASYMdRem=dASYMdRem, dASYMdImm=dASYMdImm
 
-    if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
+    if imaginary(cm) gt 0d0 and not(keyword_set(SILENT)) then $
         message,/continue,'Warning: Imaginary part of refractive index '+ $
-            'should be negative for absorbing particles. Set /silent to '+ $
+            'should be negative for absorbing particles. Set /SILENT to '+ $
             'hide this message.'
 
-    if x lt 0.02 then NStop = 2 else begin
+    if Dx lt 0.02 then NStop = 2 else begin
         case 1 OF
-            x le 8.0    : NStop = x + 4.00*x^(1./3.) + 1.0
-            x lt 4200.0 : NStop = x + 4.05*x^(1./3.) + 2.0
+            Dx le 8.0    : NStop = Dx + 4.00*Dx^(1./3.) + 1.0
+            Dx lt 4200.0 : NStop = Dx + 4.05*Dx^(1./3.) + 2.0
             ; no. of terms required for convergence of Mie expressions
             ; (Wiscombe 1980)
-            else        : NStop = x + 4.00*x^(1./3.) + 2.0
+            else         : NStop = Dx + 4.00*Dx^(1./3.) + 2.0
         endcase
     endelse
 
     m = cm
 
-    y = m*x
+    y = m*Dx
     Nmx = fix(max([NStop,abs(y)]) + 15.)
     D = dcomplexarr(Nmx+1)
 
@@ -119,10 +114,10 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca, $
         D(p) = R - 1/(R+D(p+1)) ; downward recurrence to find A_n(y)
     endfor
 
-    psim1 = cos(x)
-    psi0 = sin(x)
-    chim1 = -sin(x)
-    chi0 = cos(x)
+    psim1 = cos(Dx)
+    psi0 = sin(Dx)
+    chim1 = -sin(Dx)
+    chi0 = cos(Dx)
 
     Pi0 = 0.D0
     Pi1 = 1.D0
@@ -138,12 +133,12 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca, $
     dQscadRem = 0.D0
     dQscadImm = 0.D0
 
-    if ARG_PRESENT(asym) or $
-        ARG_PRESENT(dasymdx) or $
-        ARG_PRESENT(dasymdRem) or $
-        ARG_PRESENT(dasymdImm) then begin
+    if arg_present(ASYM) or $
+       arg_present(dASYMdx) or $
+       arg_present(dASYMdRem) or $
+       arg_present(dASYMdImm) then begin
 
-        asym = 0.D0
+        ASYM = 0.D0
         dgdx = 0.D0
         dgdn = 0.D0
         dgdk = 0.d0
@@ -161,29 +156,29 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca, $
     dSmdImm = 0.D0
 
     for n = 1,Nstop do begin
-        psi1 = double(2d0*n-1d0)*psi0/x - psim1
-        chi1 = double(2d0*n-1d0)*chi0/x - chim1 ;the recurrence relations
+        psi1 = double(2d0*n-1d0)*psi0/Dx - psim1
+        chi1 = double(2d0*n-1d0)*chi0/Dx - chim1 ;the recurrence relations
 
         zeta = dcomplex(psi1,chi1)
         zetanm1 = dcomplex(psi0,chi0)
 
-        a_n = ((D(n)/m+n/x)*psi1-psi0) / ((D(n)/m+n/x)*zeta-zetanm1)
-        b_n = ((D(n)*m+n/x)*psi1-psi0) / ((D(n)*m+n/x)*zeta-zetanm1) ; formulae D9,D10
+        a_n = ((D(n)/m+n/Dx)*psi1-psi0) / ((D(n)/m+n/Dx)*zeta-zetanm1)
+        b_n = ((D(n)*m+n/Dx)*psi1-psi0) / ((D(n)*m+n/Dx)*zeta-zetanm1) ; formulae D9,D10
 
         i = dcomplex(0,1)
-        dadx = i*((D(n)^2d0)*(1/m^2d0-1d0) + n*(n+1d0)*(1d0/y^2d0-1d0/x^2d0)) / $
-               ((D(n)/m+n/x)*zeta-zetanm1)^2d0
-        dbdx = i*(1- m^2d0 + n*(n+1d0)*(m^2d0/y^2d0-1d0/x^2d0))               / $
-               ((D(n)*m+n/x)*zeta-zetanm1)^2d0
+        dadx = i*((D(n)^2d0)*(1/m^2d0-1d0) + n*(n+1d0)*(1d0/y^2d0-1d0/Dx^2d0)) / $
+               ((D(n)/m+n/Dx)*zeta-zetanm1)^2d0
+        dbdx = i*(1- m^2d0 + n*(n+1d0)*(m^2d0/y^2d0-1d0/Dx^2d0))               / $
+               ((D(n)*m+n/Dx)*zeta-zetanm1)^2d0
 
         dadRem = i*(n*(n+1d0)/y - y*(1d0+(D(n)^2d0)) - D(n)) / $
-                 ((D(n)+n*m/x)*zeta - m*zetanm1)^2d0
+                 ((D(n)+n*m/Dx)*zeta - m*zetanm1)^2d0
         dadImm =  -(n*(n+1d0)/y - y*(1d0+(D(n)^2d0)) - D(n)) / $
-                 ((D(n)+n*m/x)*zeta - m*zetanm1)^2d0
+                 ((D(n)+n*m/Dx)*zeta - m*zetanm1)^2d0
         dbdRem = i*(n*(n+1d0)/y - y*(1d0+(D(n)^2d0)) + D(n)) / $
-                 ((D(n)*m+n/x)*zeta-zetanm1)^2d0
+                 ((D(n)*m+n/Dx)*zeta-zetanm1)^2d0
         dbdImm =  -(n*(n+1d0)/y - y*(1d0+(D(n)^2d0)) + D(n)) / $
-                 ((D(n)*m+n/x)*zeta-zetanm1)^2d0 ; my formulae for the derivatives
+                 ((D(n)*m+n/Dx)*zeta-zetanm1)^2d0 ; my formulae for the derivatives
 
         Qext = (2d0*n+1d0)*double(a_n + b_n) + Qext
 
@@ -218,8 +213,8 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca, $
               pre1 = ( 2d0*dn + 1d0) / dn / (dn + 1d0)
 
 
-              ; At the end, we'll do asym=asym * 4/x^2
-              asym += pre0 * double( anm1*conj(a_n) + bnm1*conj(b_n) ) + $
+              ; At the end, we'll do ASYM=ASYM * 4/x^2
+              ASYM += pre0 * double( anm1*conj(a_n) + bnm1*conj(b_n) ) + $
                       pre1 * double( anm1 * conj(bnm1) )
 
 
@@ -269,23 +264,23 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca, $
         Pi1 = s + t*(n+1d0)/n
     endfor
 
-    Qext = 2d0*Qext/x^2d0
+    Qext = 2d0*Qext/Dx^2d0
 
-    dQextdx1 = 2d0*dQextdx1/x^2d0
-    dQextdx2 = 4d0*dQextdx2/x^3d0
+    dQextdx1 = 2d0*dQextdx1/Dx^2d0
+    dQextdx2 = 4d0*dQextdx2/Dx^3d0
     dQextdx = dQextdx1 - dQextdx2
 
-    dQextdRem = 2d0*dQextdRem/x^2d0
-    dQextdImm = 2d0*dQextdImm/x^2d0
+    dQextdRem = 2d0*dQextdRem/Dx^2d0
+    dQextdImm = 2d0*dQextdImm/Dx^2d0
 
-    Qsca = 2d0*Qsca/x^2d0
+    Qsca = 2d0*Qsca/Dx^2d0
 
-    dQscadx1 = 4d0*dQscadx1/x^2d0
-    dQscadx2 = 4d0*dQscadx2/x^3d0
+    dQscadx1 = 4d0*dQscadx1/Dx^2d0
+    dQscadx2 = 4d0*dQscadx2/Dx^3d0
     dQscadx = dQscadx1 - dQscadx2
 
-    dQscadRem = 4d0*dQscadRem/x^2d0
-    dQscadImm = 4d0*dQscadImm/x^2d0
+    dQscadRem = 4d0*dQscadRem/Dx^2d0
+    dQscadImm = 4d0*dQscadImm/Dx^2d0
 
     S1 = (Sp + Sm)/2d0
     S2 = (Sp - Sm)/2d0
@@ -306,13 +301,13 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca, $
     di2dImm = 2*(double(S2)*double(dS2dImm) + imaginary(S2)*imaginary(dS2dImm))
 
     if calc_g then begin
-        fxx = 4d0 / x / x
+        fxx = 4d0 / Dx / Dx
 
-        asym = fxx * asym / Qsca
+        ASYM = fxx * ASYM / Qsca
 
-        dasymdx   = ( fxx*dgdx - asym*(dQscadx+2d0*Qsca/x) ) / Qsca
-        dasymdRem = ( fxx*dgdn - asym*dQscadRem ) / Qsca
-        dasymdImm = ( fxx*dgdk - asym*dQscadImm ) / Qsca
+        dASYMdx   = ( fxx*dgdx - ASYM*(dQscadx+2d0*Qsca/Dx) ) / Qsca
+        dASYMdRem = ( fxx*dgdn - ASYM*dQscadRem ) / Qsca
+        dASYMdImm = ( fxx*dgdk - ASYM*dQscadImm ) / Qsca
     endif
 
     return

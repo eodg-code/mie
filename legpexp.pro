@@ -1,4 +1,4 @@
-pro legpexp,Inp,qv,qw,phase,Inlc,lc
+pro legpexp, Inp, qv, qw, phase, Inlc, lc
 
 ; Expands function as a Legendre series.  The function is assumed to have been
 ; evaluated at Legendre quadrature points - Aqv.  The evaluation stops when the
@@ -17,7 +17,7 @@ pro legpexp,Inp,qv,qw,phase,Inlc,lc
 ;   Imaxnp = 1100
     Imaxnp = 20000
 
-    lc    = dblarr(Inp)
+    lc = dblarr(Inp)
 
     if Inp gt Imaxnp then stop, 'Error in legpexp: Too many quadrature points'
 

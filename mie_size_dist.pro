@@ -10,6 +10,10 @@
 ;     EODG Mie routines
 ;
 ; CALLING SEQUENCE:
+;     mie_size_dist, distname, Nd, params, wavenumber, Cm [, Dqv = Dqv] $
+;     [, Npts=Npts] [, xres=xres] [, info=info] [, /DLM] [, mthread=mthread] $
+;     [, /SILENT], Bext, Bsca, w, g [, SPM] [, Bbac=Bbac] [, Gavg=Gavg] $
+;     [, Vavg=Vavg] [, Ravg=Ravg] [, RVW=RVW]
 ;
 ; INPUTS:
 ;     distname    Name of the size distribution. 'modified_gamma' according to
@@ -25,25 +29,25 @@
 ;                     params[0] : Median radius of the particle distribution
 ;                     params[1] : The spread of the distribution, such that the
 ;                                 standard deviation of ln(r) is ln(S)
-;     Wavenumber: Wavenumber of light (units must match units of the size
+;     wavenumber: wavenumber of light (units must match units of the size
 ;                 distribution)
 ;     Cm:         Complex refractive index
 ;
 ; KEYWORD PARAMETERS:
 ;     Dqv:        An array of the cosines of scattering angles at which to
 ;                 compute the phase function.
-;     dlm:        If set the IDL DLM version of the Mie scattering procedure
-;                 will be called rather than the IDL coded version.
-;     npts:       Allows the user to override the automatically calculated
+;     Npts:       Allows the user to override the automatically calculated
 ;                 number of quadrature points for the integration over size.
 ;                 NOTE: reducing the number of abscissa can substantially
 ;                 decrease the accuracy of the result - BE CAREFUL!!!!
 ;     xres:       Sets the spacing of the quadrature points (in size parameter).
-;                 Overridden by npts. Default is 0.1. The same warning as npts
+;                 Overridden by Npts. Default is 0.1. The same warning as Npts
 ;                 applies here!
 ;     info:       Named variable that, on return, will contain a structure
 ;                 containing the number of abscissa points and the maximum and
 ;                 minimum size parameters used.
+;     DLM:        If set the IDL DLM version of the Mie scattering procedure
+;                 will be called rather than the IDL coded version.
 ;     mthread:    Controls the number of threads which will be utilised by the
 ;                 DLM version of the algorithm. If not set by default the code
 ;                 will use 1 thread. The behaviour of the code for different
@@ -55,19 +59,21 @@
 ;                   cores (hyperthreads do not count as physical cores) on the
 ;                   system will not speed up the calculation.
 ;
-;                 * HAS NO EFFECT UNLESS dlm IS ALSO SET*
+;                 * HAS NO EFFECT UNLESS DLM IS ALSO SET*
+;     SILENT:     If set all warning messages issued by the code will be
+;                 suppressed.
 ;
 ; OUTPUTS:
 ;     Bext:       The extinction coefficient
 ;     Bsca:       The scattering coefficient
 ;     w:          The single scatter albedo
 ;     g:          The asymmetry parameter
+;
+; OPTIONAL OUTPUTS:
 ;     SPM:        The scattering phase matrix elements F11 (SPM[0,*]), F33
 ;                 (SPM[1,*]), F12 (SPM[2,*]), F34 (SPM[3,*]), where the 2nd
 ;                 dimension is the same dimension as Dqv. Also only calculated
 ;                 if Dqv is specified.
-;
-; OPTIONAL OUTPUTS:
 ;
 ; KEYWORD OUTPUTS:
 ;     Bbac:       The backscatter coefficient
@@ -90,7 +96,7 @@
 ;         quadrature
 ;     G. Thomas, Jun 2005: Added calculation of the phase function after calling
 ;         mie_dlm_single, as the DLM no longer returns it. Changed "size" to
-;         "Dx" (as size is a IDL keyword!). Also added npts and info keywords.
+;         "Dx" (as size is a IDL keyword!). Also added Npts and info keywords.
 ;     R. Grainger, 8 Jun 2005: Slight modification of code.
 ;     G. Thomas, 9 Jun 2005: Added xres keyword
 ;     A. Smith,  6 Jul 2009: Added backscatter coefficient and +ve cm warning.
@@ -116,10 +122,10 @@
 ;         modified_gamma and lognormal -> log_normal.
 ;-
 
-pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
-                   npts=npts, xres=xres, info=info, mthread=mthread, Bext, $
-                   Bsca, w, g, SPM, Bbac=Bbac, Gavg=Gavg, Vavg=Vavg, Ravg=Ravg, $
-                   RVW=RVW
+pro mie_size_dist, distname, Nd, params, wavenumber, Cm, Dqv=Dqv, Npts=Npts, $
+                   xres=xres, info=info, DLM=DLM, mthread=mthread, $
+                   SILENT=SILENT, Bext, Bsca, w, g, SPM, Bbac=Bbac, Gavg=Gavg, $
+                   Vavg=Vavg, Ravg=Ravg, RVW=RVW
 
     Common mieln, absc, wght
 
@@ -140,24 +146,24 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
         message,'Invalid size distribution name: ' + distname
     endelse
 
-    if 2D0 * !dpi * Rl * Wavenumber ge ru_max then message,'Lower bound of ' + $
+    if 2D0 * !dpi * Rl * wavenumber ge ru_max then message,'Lower bound of ' + $
         'integral is larger than maximum permitted size parameter.'
-    if 2D0 * !dpi * Ru * Wavenumber ge ru_max then begin
-        Ru = (ru_max - 1d0) / ( 2D0 * !dpi * Wavenumber )
+    if 2D0 * !dpi * Ru * wavenumber ge ru_max then begin
+        Ru = (ru_max - 1d0) / ( 2D0 * !dpi * wavenumber )
         message,/continue,'Warning: Radius upper bound truncated to avoid '  + $
             'size parameter overflow.'
     endif
 
-    if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
+    if imaginary(cm) gt 0d0 and not(keyword_set(SILENT)) then $
         message, /continue,'Warning: Imaginary part of refractive index '+ $
-            'should be negative for absorbing particles. Set /silent to '+ $
+            'should be negative for absorbing particles. Set /SILENT to '+ $
             'hide this message.'
 
     if not keyword_set(xres) then xres = 0.1
 
-    if not keyword_set(npts) then begin
+    if not keyword_set(Npts) then begin
 ;       Accurate calculation requires 0.1 step size in x
-        Npts = (long(2D0 * !dpi * (ru-rl) * Wavenumber/xres)) > 200
+        Npts = (long(2D0 * !dpi * (ru-rl) * wavenumber/xres)) > 200
     endif
 
 ;   quadrature on the radii
@@ -173,7 +179,7 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
               exp(-0.5D0*(alog(R/params[0]) / alog(params[1]))^2)
     endif
 
-    Dx = 2D0 * !dpi * R * Wavenumber
+    Dx = 2D0 * !dpi * R * wavenumber
 
     if arg_present(info) then info = { Npts    : Npts, $
                                        MinSize : Dx[0], $
@@ -183,9 +189,9 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
     if n_elements(Dqv) gt 0 then begin
         Inp = n_elements(Dqv)
         SPM = dblarr(4,Inp)
-        if keyword_set(dlm) then begin
+        if keyword_set(DLM) then begin
 ;           Put the mthread keyword into the right form for the DLM call...
-            if n_elements(mthread) gt 0 then begin
+            if keyword_set(mthread) gt 0 then begin
                 if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
                 else mthrd = mthread
             endif else mthrd = 1
@@ -217,7 +223,7 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
 ;           endfor
         endif else begin
 ;           Put the mthread keyword into the right form for the DLM call...
-            if n_elements(mthread) gt 0 then begin
+            if keyword_set(mthread) gt 0 then begin
                 if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
                 else mthrd = mthread
             endif else mthrd = 1
@@ -227,10 +233,10 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
                         DSPM ;, mthread=mthrd
         endelse
     endif else begin
-        if keyword_set(dlm) then begin
-            Mie_dlm_single, double(Dx),dcomplex(Cm),Dqxt,Dqsc,Dqbk,Dg
+        if keyword_set(DLM) then begin
+            Mie_dlm_single, double(Dx), dcomplex(Cm), Dqxt, Dqsc, Dqbk, Dg
         endif else begin
-            Mie_single, Dx,Cm,Dqxt,Dqsc,Dqbk,Dg
+            Mie_single, Dx, Cm, Dqxt, Dqsc, Dqbk, Dg
         endelse
     endelse
 
@@ -241,7 +247,7 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
     Bsca = total(W1PA * DQsc)
     g = total(W1PA * dg * DQsc) / Bsca
     w = Bsca / Bext
-    Bbac = total(W1PA * DQbk)
+    if arg_present(Bbac) then Bbac = total(W1PA * DQbk)
 
     if n_elements(Dqv) gt 0 then begin
         for i = 0,Inp-1 do begin
@@ -252,8 +258,8 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
         endfor
     endif
 
-    if n_elements(Gavg) then Gavg = total(W1PA)
-    if n_elements(Vavg) then Vavg = total(W1PV)
-    if n_elements(Ravg) then Ravg = total(W1P * R)
-    if n_elements(RVW) then RVW = total(W1PV * R) / Vavg
+    if arg_present(Gavg) then Gavg = total(W1PA)
+    if arg_present(Vavg) then Vavg = total(W1PV)
+    if arg_present(Ravg) then Ravg = total(W1P * R)
+    if arg_present(RVW) then RVW = total(W1PV * R) / Vavg
 end

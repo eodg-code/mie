@@ -10,9 +10,8 @@
 ;     EODG Mie routines
 ;
 ; CALLING SEQUENCE:
-;     mie_single, Dx, Cm [, Dqv = dqv] $
-;     [, Dqxt] [, Dqsc] [, Dqbk] [, Dg] [, Xs1] [, Xs2] [, SPM] $
-;     [, /DLM] [, /silent] [, mthread = mthread]
+;     mie_single, Dx, Cm [, Dqv=Dqv] [, /DLM] [, mthread=mthread] $
+;     [, /SILENT], Dqxt, Dqsc, Dqbk, Dg [, Xs1] [, Xs2] [, SPM]
 ;
 ; INPUTS:
 ;     Dx:      A 1D array of particle size parameters
@@ -21,10 +20,9 @@
 ; OPTIONAL INPUTS:
 ;
 ; KEYWORD PARAMETERS:
-;     dqv:     An array of the cosines of scattering angles at which to compute
+;     Dqv:     An array of the cosines of scattering angles at which to compute
 ;              the phase function.
-;     dlm:     If set the code will call the IDL DLM version of the algorithm.
-;     silent:  If set all warning messages issued by the code will be suppressed.
+;     DLM:     If set the code will call the IDL DLM version of the algorithm.
 ;     mthread: Controls the number of threads which will be utilised by the DLM
 ;              version of the algorithm. If not set by default the code will use
 ;              1 thread. The behaviour of the code for different values of this
@@ -36,13 +34,16 @@
 ;                cores (hyperthreads do not count as physical cores) on the
 ;                system will not speed up the calculation.
 ;
-;              * HAS NO EFFECT UNLESS dlm IS ALSO SET*
+;              * HAS NO EFFECT UNLESS DLM IS ALSO SET*
+;     SILENT:  If set all warning messages issued by the code will be suppressed.
 ;
 ; OUTPUTS:
 ;     Dqxt:    The extinction efficiency
 ;     Dqsc:    The scattering efficiency
 ;     Dqbk:    The backscattering efficiency
 ;     Dg:      The asymmetry parameter
+;
+; OPTIONAL OUTPUTS:
 ;     Xs1:     The first amplitude function - amplitude of light polarized in
 ;              the plane perpendicular to the directions of incident light
 ;              propagation and observation.
@@ -56,8 +57,6 @@
 ;              dimension is the same dimension as Dqv and the 3rd dimension is
 ;              the same dimension as Dx. Also only calculated if Dqv is
 ;              specified.
-;
-; OPTIONAL OUTPUTS:
 ;
 ; KEYWORD OUTPUTS:
 ;
@@ -75,7 +74,7 @@
 ;     G. Thomas, Feb 2004: (Introduced explicit double precision numerical
 ;         values into all computational expressions)
 ;     G. Thomas, Apr 2005: (NmX assignment changed to type long)
-;     G. Thomas, Apr 2005: (Added dlm keyword)
+;     G. Thomas, Apr 2005: (Added DLM keyword)
 ;     G. Thomas, Apr 2005: (Changed code to ensure Qbsc is always calculated for
 ;         the backscatter direction)
 ;     G. Thomas, Jun 2005: (Added calculation of phase function after calling
@@ -99,35 +98,35 @@
 ;         no need to calculate it here any more.)
 ;-
 
-pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
-               silent=silent,mthread=mthread
+pro mie_single, Dx, Cm, Dqv=Dqv, DLM=DLM, mthread=mthread, SILENT=SILENT, $
+                Dqxt, Dqsc, Dqbk, Dg, Xs1, Xs2, SPM
 
     Imaxx = 120000l
     RIMax = 2.5
     Itermax = long(Imaxx * RIMax)
     Imaxnp = 10000l ; Change this as required
-    Sizes = N_Elements(Dx)
+    Sizes = n_elements(Dx)
 
-    if imaginary(cm) gt 0d0 and not(keyword_set(silent)) then $
+    if imaginary(cm) gt 0d0 and not(keyword_set(SILENT)) then $
         message, /continue, 'Warning: Imaginary part of refractive index '+ $
-            'should be negative for absorbing particles. Set /silent to '+ $
+            'should be negative for absorbing particles. Set /SILENT to '+ $
             'hide this message.'
 
-    if keyword_set(dlm) then begin
-;   If the dlm keyword is set, use the DLM version of the code
+    if keyword_set(DLM) then begin
+;   If the DLM keyword is set, use the DLM version of the code
     DxArr = dblarr(Sizes)
     DxArr[*] = Dx
     DCm = dcomplex(Cm)
 
 ;   Put the mthread keyword into the right form for the DLM call...
-    if n_elements(mthread) gt 0 then begin
+    if keyword_set(mthread) gt 0 then begin
         if mthread lt 1 then mthrd = !CPU.TPOOL_NTHREADS $
         else mthrd = mthread
     endif else mthrd = 1
 
-    if keyword_set(dqv) then begin
-        Inp = n_elements(dqv)
-        mie_dlm_single, DxArr, DCm, dqv=double(dqv), Dqxt, Dqsc, Dqbk, $
+    if n_elements(Dqv) gt 0 then begin
+        Inp = n_elements(Dqv)
+        mie_dlm_single, DxArr, DCm, Dqv=double(Dqv), Dqxt, Dqsc, Dqbk, $
                      Dg, Xs1, Xs2, F11, F33, F12, F34; , mthread=mthrd
         SPM = dblarr(4,Inp,Sizes)
         for i = 0,Sizes-1 do begin
@@ -138,7 +137,7 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
             SPM[3,*,*] = F34
         endfor
 
-;       mie_dlm_single, DxArr, DCm, dqv=double(dqv), Dqxt, Dqsc, Dqbk, $
+;       mie_dlm_single, DxArr, DCm, Dqv=double(Dqv), Dqxt, Dqsc, Dqbk, $
 ;                    Dg, Xs1, Xs2, mthread=mthrd
 ;       Cannot get the DLM to return the phase function. Very mysterious...
 ;       So must calculate the elements of SPM below.
@@ -161,11 +160,11 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 
     endif else begin ;No DLM? Do everything in IDL
 
-    if keyword_set(dqv) then begin
-        tmp = where(dqv eq -1.0,bktheta)
-        if bktheta eq 0 then dqv2 = [dqv,-1d] else dqv2 = dqv
-        Inp  = n_elements(dqv)
-        Inp2 = n_elements(dqv2)
+    if n_elements(Dqv) gt 0 then begin
+        tmp = where(Dqv eq -1.0,bktheta)
+        if bktheta eq 0 then Dqv2 = [Dqv,-1d] else Dqv2 = Dqv
+        Inp  = n_elements(Dqv)
+        Inp2 = n_elements(Dqv2)
         ph = dblarr(Inp)
         Xs1 = complexarr(Inp,Sizes)
         Xs2 = complexarr(Inp,Sizes)
@@ -264,8 +263,8 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 
         if (Dg(Size) gt 0) then Dg(Size) = 2D0 * Dg(Size) / Dqsc(Size)
 
-;       The following lines are not needed unless dqv was set
-        if n_elements(dqv) gt 0 then begin
+;       The following lines are not needed unless Dqv was set
+        if n_elements(Dqv) gt 0 then begin
             Xs1[*,Size] = ((Sp[0:Inp-1] + Sm[0:Inp-1]) / 2D0)
             Xs2[*,Size] = ((Sp[0:Inp-1] - Sm[0:Inp-1]) / 2D0)
             SPM[0,*,Size] =  double(Xs1[*,Size]*conj(Xs1[*,Size]) + $

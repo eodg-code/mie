@@ -19,8 +19,8 @@ pro scat_phase_matrix_exp, n_l, qx, qw, F, n_l2, coefs
 ;          integration of the input scattering phase matrix F.
 ;     qw:  Array of quadrature weights (sum(qw) = unity) for the integration of
 ;          the input scattering phase matrix F. n_elements(qx) = n_elements(qx).
-;     F:   2D array (6, n_elements(qx)) of the elements of scattering phase
-;          matrix for each quadrature point where
+;     F:   2D array (6, n_elements(qx)) of the elements of the single scattering
+;          phase matrix for each quadrature point where
 ;          F[1,*] = F11[*]
 ;          F[2,*] = F22[*]
 ;          F[3,*] = F33[*]

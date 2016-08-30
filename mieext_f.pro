@@ -1,4 +1,4 @@
-pro mieext_f, NPts, Dx, Cm, Dqxt, Dqsc, Dg
+pro mieext_f, Npts, Dx, Cm, Dqxt, Dqsc, Dg
 
 ; Multi architecture Mie routine.
 ; INPUT
@@ -16,6 +16,6 @@ pro mieext_f, NPts, Dx, Cm, Dqxt, Dqsc, Dg
                                         'mieextidl_', Npts, Dx, Cm, Dqxt, Dqsc, Dg)
         'alpha': status = CALL_EXTERNAL('/home/crun/eodg/idl/mie/mieext_alpha.so', $
                                         'mieextidl_', Npts, Dx, Cm, Dqxt, Dqsc, Dg)
-        else: Mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
+        else: Mieext, Npts, Dx, Cm, Dqxt, Dqsc, Dg
     endcase
 end

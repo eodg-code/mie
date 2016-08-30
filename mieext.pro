@@ -1,4 +1,4 @@
-pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
+pro mieext, Npts, Dx, Cm, Dqxt, Dqsc, Dg
 
     Imaxx = 2600
     Itermax = 3500
@@ -8,7 +8,7 @@ pro mieext, NPts, Dx, Cm, Dqxt, Dqsc, Dg
     Dqsc(*) = 0D0
     Dg(*) = 0D0
 
-    for I = 0, NPts - 1 do begin
+    for I = 0, Npts - 1 do begin
         if (Dx(I) gt Imaxx) then message, 'Error: Size Parameter Overflow in Mie'
         Ir = 1.D0 / Cm
         Y =  Dx(I) * Cm
