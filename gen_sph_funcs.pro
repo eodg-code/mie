@@ -13,9 +13,9 @@
 ; CALLING SEQUENCE:
 ;
 ; INPUTS:
-;     n_l:  Maximum order to compute.
-;     mu:   Array of scattering angle (0 - 180) cosines for which to
-;           compute functions for.
+;     n_l: Maximum order to compute.
+;     mu:  Array of scattering angle (0 - 180) cosines for which to compute
+;          functions for.
 ;
 ; OPTIONAL INPUTS:
 ;

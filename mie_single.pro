@@ -15,8 +15,8 @@
 ;     [, /DLM] [, /silent] [, mthread = mthread]
 ;
 ; INPUTS:
-;     Dx:         A 1D array of particle size parameters
-;     Cm:         The complex refractive index of the particles
+;     Dx:      A 1D array of particle size parameters
+;     Cm:      The complex refractive index of the particles
 ;
 ; OPTIONAL INPUTS:
 ;
@@ -69,7 +69,7 @@
 ;
 ; MODIFICATION HISTORY:
 ;     G. Thomas, 1998: mie_uoc.pro (translation of mieint.f to IDL)
-;     D. Grainger, 2001: mie_uoc_d.pro (Added support for arrays of particle
+;     R. Grainger, 2001: mie_uoc_d.pro (Added support for arrays of particle
 ;         sizes and included calculation of phase function)
 ;     G. Thomas, Sep 2003: (Put into EODG routines format)
 ;     G. Thomas, Feb 2004: (Introduced explicit double precision numerical
@@ -145,14 +145,14 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
 ;       SPM = dblarr(4,Inp,Sizes)
 ;       for i = 0,Sizes-1 do begin
 ;           AA = 2d0 / (DxArr[i]^2 * Dqsc[i])
-;           SPM[0,*,i] =  AA * double(Xs1[*,i]*CONJ(Xs1[*,i]) + $
-;                                     Xs2[*,i]*CONJ(Xs2[*,i]))
-;           SPM[1,*,i] =  AA * double(Xs1[*,i]*CONJ(Xs2[*,i]) + $
-;                                     Xs2[*,i]*CONJ(Xs1[*,i]))
-;           SPM[2,*,i] = -AA * double(Xs1[*,i]*CONJ(Xs1[*,i]) - $
-;                                     Xs2[*,i]*CONJ(Xs2[*,i]))
-;           SPM[3,*,i] = -AA * double((Xs1[*,i]*CONJ(Xs2[*,i]) - $
-;                                      Xs2[*,i]*CONJ(Xs1[*,i])) * $
+;           SPM[0,*,i] =  AA * double(Xs1[*,i]*conj(Xs1[*,i]) + $
+;                                     Xs2[*,i]*conj(Xs2[*,i]))
+;           SPM[1,*,i] =  AA * double(Xs1[*,i]*conj(Xs2[*,i]) + $
+;                                     Xs2[*,i]*conj(Xs1[*,i]))
+;           SPM[2,*,i] = -AA * double(Xs1[*,i]*conj(Xs1[*,i]) - $
+;                                     Xs2[*,i]*conj(Xs2[*,i]))
+;           SPM[3,*,i] = -AA * double((Xs1[*,i]*conj(Xs2[*,i]) - $
+;                                      Xs2[*,i]*conj(Xs1[*,i])) * $
 ;                                      complex(0.0d, 1.0d))
 ;       endfor
     endif else begin
@@ -167,56 +167,56 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
         Inp  = n_elements(dqv)
         Inp2 = n_elements(dqv2)
         ph = dblarr(Inp)
-        Xs1 = ComplexArr(Inp,Sizes)
-        Xs2 = ComplexArr(Inp,Sizes)
-        SPM = Dblarr(4,Inp,Sizes)
+        Xs1 = complexarr(Inp,Sizes)
+        Xs2 = complexarr(Inp,Sizes)
+        SPM = dblarr(4,Inp,Sizes)
     endif else begin
         Inp = 1
         Inp2 = Inp
         Dqv2 = [-1d0]
     endelse
 
-    Dqxt = Dblarr(Sizes)
-    Dqsc = Dblarr(Sizes)
-    Dqbk = DComplexArr(Sizes)
-    Dg = Dblarr(Sizes)
+    Dqxt = dblarr(Sizes)
+    Dqsc = dblarr(Sizes)
+    Dqbk = dcomplexarr(Sizes)
+    Dg = dblarr(Sizes)
 
     for Size = 0l, Sizes - 1 do begin
 
-;       if (Dx(Size) GT Imaxx) then $
+;       if (Dx(Size) gt Imaxx) then $
 ;           message, 'Error: Size Parameter Overflow in Mie'
         Ir = 1.D0 / Cm
         Y =  Dx(Size) * Cm
 
-        if (Dx(Size) LT 0.02) then NStop = 2 else begin
+        if (Dx(Size) lt 0.02) then NStop = 2 else begin
             case 1 OF
-                (Dx(Size) LE 8.0)    : $
+                (Dx(Size) le 8.0)    : $
                     NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
-                (Dx(Size) LT 4200.0) : $
+                (Dx(Size) lt 4200.0) : $
                     NStop = Dx(Size) + 4.05*Dx(Size)^(1./3.) + 2.0
                 else                 : $
                     NStop = Dx(Size) + 4.00*Dx(Size)^(1./3.) + 2.0
             endcase
         end
-        NmX = LONG(MAX([NStop,ABS(Y)]) + 15.)
-        D = DCOMPLEXARR(Nmx+1)
+        NmX = long(max([NStop,abs(Y)]) + 15.)
+        D = dcomplexarr(Nmx+1)
 
         for N = Nmx-1,1,-1 do begin
             A1 = (N+1) / Y
             D(N) = A1 - 1/(A1+D(N+1))
         end
 
-        Sm = DCOMPLEXARR(Inp2)
-        Sp = DCOMPLEXARR(Inp2)
-        Pi0 = DCOMPLEXARR(Inp2)
-        Pi1 = DCOMPLEX(REPLICATE(1.D0,Inp2),REPLICATE(0.D0,Inp2))
+        Sm = dcomplexarr(Inp2)
+        Sp = dcomplexarr(Inp2)
+        Pi0 = dcomplexarr(Inp2)
+        Pi1 = dcomplex(replicate(1.D0,Inp2),replicate(0.D0,Inp2))
 
-        Psi0 = Cos(Dx(Size))
-        Psi1 = Sin(Dx(Size))
-        Chi0 =-Sin(Dx(Size))
-        Chi1 = Cos(Dx(Size))
-        Xi0 = DCOMPLEX(Psi0,Chi0)
-        Xi1 = DCOMPLEX(Psi1,Chi1)
+        Psi0 = cos(Dx(Size))
+        Psi1 = sin(Dx(Size))
+        Chi0 =-sin(Dx(Size))
+        Chi1 = cos(Dx(Size))
+        Xi0 = dcomplex(Psi0,Chi0)
+        Xi1 = dcomplex(Psi1,Chi1)
 
         Dg(Size) = 0.D0
         Dqsc(Size) = 0.D0
@@ -225,22 +225,22 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
         Tnp1 = 1D0
 
         for N = 1l,NStop do begin
-            DN = Double(N)
+            DN = double(N)
             Tnp1 = Tnp1 + 2D0
             Tnm1 = Tnp1 - 2D0
             A2 = Tnp1 / (DN*(DN+1.D0))
             Turbo = (DN+1.D0) / DN
             Rnx = DN/Dx(Size)
-            Psi = DOUBLE(Tnm1)*Psi1/Dx(Size) - Psi0
+            Psi = double(Tnm1)*Psi1/Dx(Size) - Psi0
             Chi = Tnm1*Chi1/Dx(Size)       - Chi0
-            Xi = DCOMPLEX(Psi,Chi)
+            Xi = dcomplex(Psi,Chi)
             A = ((D[N]*Ir+Rnx)*Psi-Psi1) / ((D[N]*Ir+Rnx)*  Xi-  Xi1)
             B = ((D[N]*Cm+Rnx)*Psi-Psi1) / ((D[N]*Cm+Rnx)*  Xi-  Xi1)
-            Dqxt(Size) = Tnp1 * DOUBLE(A + B)                 + Dqxt(Size)
-            Dqsc(Size) = Tnp1 * DOUBLE(A*CONJ(A) + B*CONJ(B)) + Dqsc(Size)
-            if (N GT 1) then Dg(Size) = Dg(Size) $
-                      + (dN*dN - 1) * DOUBLE(ANM1*CONJ(A) + BNM1 * CONJ(B)) / dN $
-                      + TNM1 * DOUBLE(ANM1*CONJ(BNM1)) / (dN*dN - dN)
+            Dqxt(Size) = Tnp1 * double(A + B)                 + Dqxt(Size)
+            Dqsc(Size) = Tnp1 * double(A*conj(A) + B*conj(B)) + Dqsc(Size)
+            if (N gt 1) then Dg(Size) = Dg(Size) $
+                      + (dN*dN - 1) * double(ANM1*conj(A) + BNM1 * conj(B)) / dN $
+                      + TNM1 * double(ANM1*conj(BNM1)) / (dN*dN - dN)
             Anm1 = A
             Bnm1 = B
 
@@ -258,24 +258,24 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
             Psi1 = Psi
             Chi0 = Chi1
             Chi1 = Chi
-            Xi1 = DCOMPLEX(Psi1,Chi1)
+            Xi1 = dcomplex(Psi1,Chi1)
 
         end; for NStop
 
-        if (Dg(Size) GT 0) then Dg(Size) = 2D0 * Dg(Size) / Dqsc(Size)
+        if (Dg(Size) gt 0) then Dg(Size) = 2D0 * Dg(Size) / Dqsc(Size)
 
 ;       The following lines are not needed unless dqv was set
         if n_elements(dqv) gt 0 then begin
             Xs1[*,Size] = ((Sp[0:Inp-1] + Sm[0:Inp-1]) / 2D0)
             Xs2[*,Size] = ((Sp[0:Inp-1] - Sm[0:Inp-1]) / 2D0)
-            SPM[0,*,Size] =  double(Xs1[*,Size]*CONJ(Xs1[*,Size]) + $
-                                    Xs2[*,Size]*CONJ(Xs2[*,Size])) / Dqsc(Size)
-            SPM[1,*,Size] =  double(Xs1[*,Size]*CONJ(Xs2[*,Size]) + $
-                                    Xs2[*,Size]*CONJ(Xs1[*,Size])) / Dqsc(Size)
-            SPM[2,*,Size] = -double(Xs1[*,Size]*CONJ(Xs1[*,Size]) - $
-                                    Xs2[*,Size]*CONJ(Xs2[*,Size])) / Dqsc(Size)
-            SPM[3,*,Size] = -double((Xs1[*,Size]*CONJ(Xs2[*,Size]) - $
-                                     Xs2[*,Size]*CONJ(Xs1[*,Size])) * $
+            SPM[0,*,Size] =  double(Xs1[*,Size]*conj(Xs1[*,Size]) + $
+                                    Xs2[*,Size]*conj(Xs2[*,Size])) / Dqsc(Size)
+            SPM[1,*,Size] =  double(Xs1[*,Size]*conj(Xs2[*,Size]) + $
+                                    Xs2[*,Size]*conj(Xs1[*,Size])) / Dqsc(Size)
+            SPM[2,*,Size] = -double(Xs1[*,Size]*conj(Xs1[*,Size]) - $
+                                    Xs2[*,Size]*conj(Xs2[*,Size])) / Dqsc(Size)
+            SPM[3,*,Size] = -double((Xs1[*,Size]*conj(Xs2[*,Size]) - $
+                                     Xs2[*,Size]*conj(Xs1[*,Size])) * $
                                               complex(0.0d, 1.0d)) / Dqsc(Size)
         endif
 
@@ -287,7 +287,7 @@ pro mie_single,Dx,Cm,Dqv=dqv,Dqxt,Dqsc,Dqbk,Dg,Xs1,Xs2,SPM,dlm=dlm, $
     Dqsc = 2D0 * Dqsc / Dx^2
     Dqxt = 2D0 * Dqxt / Dx^2
     if arg_present(Dqbk) then $
-        Dqbk = 4d0* DOUBLE(Dqbk*CONJ(Dqbk)) / Dx^2
+        Dqbk = 4d0* double(Dqbk*conj(Dqbk)) / Dx^2
 
     endelse ; end of if DLM keyword
 end

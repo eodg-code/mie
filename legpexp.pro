@@ -32,9 +32,10 @@ pro legpexp,Inp,qv,qw,phase,Inlc,lc
         lpn = (double(2*n-1)/n) * qv * lpnm1 - (double(n-1)/n) * lpnm2
         lpnm2 = lpnm1
         lpnm1 = lpn
+
 ;       integrate up Legendre coefficient
         lc(n) = (2*n+1) * total(phase * lpn * qw)/2
-        if Abs(lc(n)) lt 1d-9 then goto, j20
+        if abs(lc(n)) lt 1d-9 then goto, j20
         n = n+1
     endwhile
 

@@ -16,10 +16,10 @@
 ;     EODG Mie routines
 ;
 ; CALLING SEQUENCE:
-;     mie_derivs_ln, N, Rm, S, Wavenumber, Cm[, Dqv=dqv] $
-;     [, Bext][, Bsca][, dBextdN][, dBextdRm][, dBextdS] $
-;     [, dBscadN][, dBscadRm][, dBscadS][, i1][, i2] $
-;     [, di1dN][, di1dRm][, di1dS][, di2dN][, di2dRm][, di2dS]
+;     mie_derivs_ln, N, Rm, S, Wavenumber, Cm [, Dqv=dqv] $
+;     [, Bext] [, Bsca] [, dBextdN] [, dBextdRm] [, dBextdS] $
+;     [, dBscadN] [, dBscadRm] [, dBscadS] [, i1] [, i2] $
+;     [, di1dN] [, di1dRm] [, di1dS] [, di2dN] [, di2dRm] [, di2dS]
 ;
 ; INPUTS:
 ;     N:          The number density of the particle distribution
@@ -71,8 +71,8 @@
 ; MODIFICATION HISTORY:
 ;     G. Thomas, Sep 2003: mie_derivs_ln.pro
 ;     G. Thomas, Nov 2003: minor bug fixes
-;     G. Thomas, Feb 2004: Explicit double precision added throughout and
-;         header updated quadrature. Also added npts and info keywords.
+;     G. Thomas, Feb 2004: Explicit double precision added throughout and header
+;         updated quadrature. Also added npts and info keywords.
 ;-
 
 pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, dBextdN,dBextdRm, $
@@ -92,7 +92,7 @@ pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, dBextdN,dBextdRm, $
 
     if not keyword_set(npts) then begin
 ;      Accurate calculation requires 0.1 step size in x
-       Npts = (Long(2D0 * !dpi * (ru-rl) * Wavenumber/0.1)) > 200
+       Npts = (long(2D0 * !dpi * (ru-rl) * Wavenumber/0.1)) > 200
     endif
 
 ;   quadrature on the radii
@@ -100,7 +100,7 @@ pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, dBextdN,dBextdRm, $
 
     shift_quadrature,absc,wght,Rl,Ru,R,Wghtr
 
-    Tmp =  EXP(-0.5D0*(ALOG(R/Rm) / ALOG(S))^2) / (sqrt(2D0*!dpi) * ALOG(S) * R)
+    Tmp = exp(-0.5D0*(alog(R/Rm) / alog(S))^2) / (sqrt(2D0*!dpi) * alog(S) * R)
 
     W1 = N * Tmp
 
@@ -110,8 +110,8 @@ pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, dBextdN,dBextdRm, $
                                        MaxSize : Dx[Npts-1] }
 
 ;   Create Mie variables
-    Dqxt=DBLARR(npts)
-    Dqsc=DBLARR(npts)
+    Dqxt=dblarr(npts)
+    Dqsc=dblarr(npts)
 
     Dx = 2d0 * !dpi * R * Wavenumber
 ;   If an array of cos(theta) is provided, calculate phase function
@@ -128,7 +128,7 @@ pro mie_derivs_ln, N,Rm,S,Wavenumber,Cm,Dqv=dqv,Bext,Bsca, dBextdN,dBextdRm, $
         Mie_single, Dx,Cm,Dqxt,Dqsc,Dqbk,Dg
     endelse
 
-    lnRRm = ALOG(R/Rm) ;Precalculate for speed
+    lnRRm = alog(R/Rm) ;Precalculate for speed
 
     Bext = Total(wghtr * W1 * DQxt * !dpi * R^2) ; Extinction
     dBextdN = Bext / N

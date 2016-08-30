@@ -16,11 +16,11 @@
 ;
 ; CALLING SEQUENCE:
 ;     mie_derivs, x, Cm, Dqv $
-;     [, Qext][, Qsca][, dQextdx][, dQextdRem][, dQextdImm] $
-;     [, dQscadx][, dQscadRem][, dQscadImm][, i1][, i2] $
-;     [, di1dx][, di2dx][, di1dRem][, di1dImm][, di2dRem][, di2dImm] $
-;     [, ASYM=asym][, dASYMdx=dasymdx][, dASYMdRem=dasymdrem] $
-;     [, dASYMdImm=dASYMdrem][, /SILENT]
+;     [, Qext] [, Qsca] [, dQextdx] [, dQextdRem] [, dQextdImm] $
+;     [, dQscadx] [, dQscadRem] [, dQscadImm] [, i1] [, i2] $
+;     [, di1dx] [, di2dx] [, di1dRem] [, di1dImm] [, di2dRem] [, di2dImm] $
+;     [, ASYM=asym] [, dASYMdx=dasymdx] [, dASYMdRem=dasymdrem] $
+;     [, dASYMdImm=dASYMdrem] [, /SILENT]
 ;
 ; INPUTS:
 ;     x:         The particle size parameter
@@ -76,7 +76,7 @@
 ;
 ; MODIFICATION HISTORY:
 ;     J. Lucas, 2002: Main line programme
-;     D. Grainger, 2002: Procedure version
+;     R. Grainger, 2002: Procedure version
 ;     G. Thomas, Sep 2003: Put into EODG routines format
 ;     J. Graham (UC Berkeley), Feb 2004: Introduced explicit double precision
 ;         numerical values into all computational expressions.
@@ -85,10 +85,10 @@
 ;     A. Smith, Apr 2013: Added asymmetry parameter.
 ;-
 
-pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
-                dQextdx,dQextdRem,dQextdImm,$
-                dQscadx,dQscadRem,dQscadImm,$
-                i1,i2,di1dx,di2dx,di1dRem,di1dImm,di2dRem,di2dImm,$
+pro mie_derivs, x,Cm,Dqv,Qext,Qsca, $
+                dQextdx,dQextdRem,dQextdImm, $
+                dQscadx,dQscadRem,dQscadImm, $
+                i1,i2,di1dx,di2dx,di1dRem,di1dImm,di2dRem,di2dImm, $
                 silent=silent, $
                 asym=asym,dasymdx=dasymdx, $
                 dasymdRem=dasymdRem,dasymdImm=dasymdImm
@@ -98,10 +98,10 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
             'should be negative for absorbing particles. Set /silent to '+ $
             'hide this message.'
 
-    if x LT 0.02 then NStop = 2 else begin
+    if x lt 0.02 then NStop = 2 else begin
         case 1 OF
-            x LE 8.0    : NStop = x + 4.00*x^(1./3.) + 1.0
-            x LT 4200.0 : NStop = x + 4.05*x^(1./3.) + 2.0
+            x le 8.0    : NStop = x + 4.00*x^(1./3.) + 1.0
+            x lt 4200.0 : NStop = x + 4.05*x^(1./3.) + 2.0
             ; no. of terms required for convergence of Mie expressions
             ; (Wiscombe 1980)
             else        : NStop = x + 4.00*x^(1./3.) + 2.0
@@ -111,12 +111,12 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
     m = cm
 
     y = m*x
-    Nmx = FIX(MAX([NStop,ABS(y)]) + 15.)
-    D = DCOMPLEXARR(Nmx+1)
+    Nmx = fix(max([NStop,abs(y)]) + 15.)
+    D = dcomplexarr(Nmx+1)
 
     for p = Nmx-1,1,-1 do begin
         R = (p+1) / y
-        D(p) = R - 1/(R+D(p+1)) ;downward recurrence to find A_n(y)
+        D(p) = R - 1/(R+D(p+1)) ; downward recurrence to find A_n(y)
     endfor
 
     psim1 = cos(x)
@@ -161,11 +161,11 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
     dSmdImm = 0.D0
 
     for n = 1,Nstop do begin
-        psi1 = Double(2d0*n-1d0)*psi0/x - psim1
-        chi1 = Double(2d0*n-1d0)*chi0/x - chim1 ;the recurrence relations
+        psi1 = double(2d0*n-1d0)*psi0/x - psim1
+        chi1 = double(2d0*n-1d0)*chi0/x - chim1 ;the recurrence relations
 
-        zeta = DCOMPLEX(psi1,chi1)
-        zetanm1 = DCOMPLEX(psi0,chi0)
+        zeta = dcomplex(psi1,chi1)
+        zetanm1 = dcomplex(psi0,chi0)
 
         a_n = ((D(n)/m+n/x)*psi1-psi0) / ((D(n)/m+n/x)*zeta-zetanm1)
         b_n = ((D(n)*m+n/x)*psi1-psi0) / ((D(n)*m+n/x)*zeta-zetanm1) ; formulae D9,D10
@@ -185,56 +185,56 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
         dbdImm =  -(n*(n+1d0)/y - y*(1d0+(D(n)^2d0)) + D(n)) / $
                  ((D(n)*m+n/x)*zeta-zetanm1)^2d0 ; my formulae for the derivatives
 
-        Qext = (2d0*n+1d0)*DOUBLE(a_n + b_n) + Qext
+        Qext = (2d0*n+1d0)*double(a_n + b_n) + Qext
 
-        dQextdx1  = (2d0*n+1d0)*DOUBLE(dadx + dbdx)    + dQextdx1
-        dQextdx2  = (2d0*n+1d0)*DOUBLE(a_n + b_n)      + dQextdx2
-        dQextdRem = (2d0*n+1d0)*DOUBLE(dadRem +dbdRem) + dQextdRem
-        dQextdImm = (2d0*n+1d0)*DOUBLE(dadImm +dbdImm) + dQextdImm
+        dQextdx1  = (2d0*n+1d0)*double(dadx + dbdx)    + dQextdx1
+        dQextdx2  = (2d0*n+1d0)*double(a_n + b_n)      + dQextdx2
+        dQextdRem = (2d0*n+1d0)*double(dadRem +dbdRem) + dQextdRem
+        dQextdImm = (2d0*n+1d0)*double(dadImm +dbdImm) + dQextdImm
 
-        Qsca = (2*n+1)*DOUBLE(a_n*CONJ(a_n) + b_n*CONJ(b_n)) + Qsca
+        Qsca = (2*n+1)*double(a_n*conj(a_n) + b_n*conj(b_n)) + Qsca
 
-        dQscadx1 = (2d0*n+1d0)*(DOUBLE(a_n)*DOUBLE(dadx) + $
-                   IMAGINARY(a_n)*IMAGINARY(dadx) + DOUBLE(b_n)*DOUBLE(dbdx) + $
-                   IMAGINARY(b_n)*IMAGINARY(dbdx)) + dQscadx1
+        dQscadx1 = (2d0*n+1d0)*(double(a_n)*double(dadx) + $
+                   imaginary(a_n)*imaginary(dadx) + double(b_n)*double(dbdx) + $
+                   imaginary(b_n)*imaginary(dbdx)) + dQscadx1
 
-        dQscadx2 = (2d0*n+1d0)*DOUBLE(a_n*CONJ(a_n) + b_n*CONJ(b_n)) + dQscadx2
+        dQscadx2 = (2d0*n+1d0)*double(a_n*conj(a_n) + b_n*conj(b_n)) + dQscadx2
 
-        dQscadRem = (2d0*n+1d0)*(DOUBLE(a_n)*DOUBLE(dadRem) + $
-                    IMAGINARY(a_n)*IMAGINARY(dadRem) + DOUBLE(b_n)*DOUBLE(dbdRem) + $
-                    IMAGINARY(b_n)*IMAGINARY(dbdRem)) + dQscadRem
+        dQscadRem = (2d0*n+1d0)*(double(a_n)*double(dadRem) + $
+                    imaginary(a_n)*imaginary(dadRem) + double(b_n)*double(dbdRem) + $
+                    imaginary(b_n)*imaginary(dbdRem)) + dQscadRem
 
-        dQscadImm = (2d0*n+1d0)*(DOUBLE(a_n)*DOUBLE(dadImm) + $
-                    IMAGINARY(a_n)*IMAGINARY(dadImm) + DOUBLE(b_n)*DOUBLE(dbdImm) + $
-                    IMAGINARY(b_n)*IMAGINARY(dbdImm)) + dQscadImm
+        dQscadImm = (2d0*n+1d0)*(double(a_n)*double(dadImm) + $
+                    imaginary(a_n)*imaginary(dadImm) + double(b_n)*double(dbdImm) + $
+                    imaginary(b_n)*imaginary(dbdImm)) + dQscadImm
 
         if calc_g then begin
-           if (n GT 1) then begin
+           if (n gt 1) then begin
               ; We are running one n behind for asymmetry parameter, since
               ; we require a_(n+1), b_(n+1) etc...
-              dn = DOUBLE( n-1 )
+              dn = double( n-1 )
 
               pre0 = dn * ( 2d0 + dn ) / (dn + 1d0)
               pre1 = ( 2d0*dn + 1d0) / dn / (dn + 1d0)
 
 
               ; At the end, we'll do asym=asym * 4/x^2
-              asym += pre0 * DOUBLE( anm1*CONJ(a_n) + bnm1*CONJ(b_n) ) + $
-                      pre1 * DOUBLE( anm1 * CONJ(bnm1) )
+              asym += pre0 * double( anm1*conj(a_n) + bnm1*conj(b_n) ) + $
+                      pre1 * double( anm1 * conj(bnm1) )
 
 
               ; Clean this up at the end. These are not the final expressions!
-              dgdx += pre0 * DOUBLE( CONJ(a_n)*dadxm1 + anm1*CONJ(dadx) +$
-                                     CONJ(b_n)*dbdxm1 + bnm1*CONJ(dbdx)   ) + $
-                      pre1 * DOUBLE( dadxm1*CONJ(bnm1) + anm1*CONJ(dbdxm1) )
+              dgdx += pre0 * double( conj(a_n)*dadxm1 + anm1*conj(dadx) +$
+                                     conj(b_n)*dbdxm1 + bnm1*conj(dbdx)   ) + $
+                      pre1 * double( dadxm1*conj(bnm1) + anm1*conj(dbdxm1) )
 
-              dgdn += pre0 * DOUBLE( CONJ(a_n)*dadnm1 + anm1*CONJ(dadRem) +$
-                                     CONJ(b_n)*dbdnm1 + bnm1*CONJ(dbdRem)   ) + $
-                      pre1 * DOUBLE( dadnm1*CONJ(bnm1) + anm1*CONJ(dbdnm1) )
+              dgdn += pre0 * double( conj(a_n)*dadnm1 + anm1*conj(dadRem) +$
+                                     conj(b_n)*dbdnm1 + bnm1*conj(dbdRem)   ) + $
+                      pre1 * double( dadnm1*conj(bnm1) + anm1*conj(dbdnm1) )
 
-              dgdk += pre0 * DOUBLE( CONJ(a_n)*dadkm1 + anm1*CONJ(dadImm) +$
-                                     CONJ(b_n)*dbdkm1 + bnm1*CONJ(dbdImm)   ) + $
-                      pre1 * DOUBLE( dadkm1*CONJ(bnm1) + anm1*CONJ(dbdkm1) )
+              dgdk += pre0 * double( conj(a_n)*dadkm1 + anm1*conj(dadImm) +$
+                                     conj(b_n)*dbdkm1 + bnm1*conj(dbdImm)   ) + $
+                      pre1 * double( dadkm1*conj(bnm1) + anm1*conj(dbdkm1) )
            endif
 
            anm1 = a_n
@@ -296,14 +296,14 @@ pro mie_derivs, x,Cm,Dqv,Qext,Qsca,$
     dS2dRem = (dSpdRem - dSmdRem)/2d0
     dS2dImm = (dSpdImm - dSmdImm)/2d0
 
-    i1 = DOUBLE(S1*CONJ(S1))
-    i2 = DOUBLE(S2*CONJ(S2))
-    di1dx = 2*(DOUBLE(S1)*DOUBLE(dS1dx) + IMAGINARY(S1)*IMAGINARY(dS1dx))
-    di2dx = 2*(DOUBLE(S2)*DOUBLE(dS2dx) + IMAGINARY(S2)*IMAGINARY(dS2dx))
-    di1dRem = 2*(DOUBLE(S1)*DOUBLE(dS1dRem) + IMAGINARY(S1)*IMAGINARY(dS1dRem))
-    di1dImm = 2*(DOUBLE(S1)*DOUBLE(dS1dImm) + IMAGINARY(S1)*IMAGINARY(dS1dImm))
-    di2dRem = 2*(DOUBLE(S2)*DOUBLE(dS2dRem) + IMAGINARY(S2)*IMAGINARY(dS2dRem))
-    di2dImm = 2*(DOUBLE(S2)*DOUBLE(dS2dImm) + IMAGINARY(S2)*IMAGINARY(dS2dImm))
+    i1 = double(S1*conj(S1))
+    i2 = double(S2*conj(S2))
+    di1dx = 2*(double(S1)*double(dS1dx) + imaginary(S1)*imaginary(dS1dx))
+    di2dx = 2*(double(S2)*double(dS2dx) + imaginary(S2)*imaginary(dS2dx))
+    di1dRem = 2*(double(S1)*double(dS1dRem) + imaginary(S1)*imaginary(dS1dRem))
+    di1dImm = 2*(double(S1)*double(dS1dImm) + imaginary(S1)*imaginary(dS1dImm))
+    di2dRem = 2*(double(S2)*double(dS2dRem) + imaginary(S2)*imaginary(dS2dRem))
+    di2dImm = 2*(double(S2)*double(dS2dImm) + imaginary(S2)*imaginary(dS2dImm))
 
     if calc_g then begin
         fxx = 4d0 / x / x

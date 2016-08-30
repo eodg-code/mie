@@ -27,7 +27,7 @@ Function NewtonG, QuadType, N, X
     Case strupcase(Quadtype) of
     'G': begin
         Legendre, n, x, Pl, Pm, Pn
-        Nwt = (1d0 - x^2)*Pn / (double(n) * (Pm - x*Pn))
+        Nwt = (1d0 - x^2)*Pn / (Double(n) * (Pm - x*Pn))
     End
     'R': begin
         Legendre, n, x, Pl, Pm, Pn
@@ -44,20 +44,20 @@ End ; Function Newton
 Pro Legendre, nn, x, Pl, Pm, Pn
     Case NN of
     0: Pn = 1D0 ; Pl and Pm are undefined
-    1: Begin    ; Pl is undefined
+    1: begin    ; Pl is undefined
         Pm = 1D0
         Pn = X
     End
-    Else: Begin ; NN  >= 2
+    Else: begin ; NN  >= 2
         Pl = 1d0  ; value doesn't matter
         Pm = 1d0
         Pn = x
-        for n = 2,nn do begin
-            in = 1d0/double(n)
+        For n = 2,nn do begin
+            in = 1d0/Double(n)
             Pl = Pm
             Pm = Pn
             Pn = (2d0-in) * x * Pm - (1d0-in) * Pl
-        Endfor
+        EndFor
     EndElse
     EndCase
     Return
@@ -75,14 +75,14 @@ Pro Quadrature, Quadtype, NPts, Abscissa, Weight
 ; R Radau
 ; L Lobarto
 ; HISTORY
-; RGG  7 Jun 2005 : Enlarged from GET's translation of RGG FORTRAN
-; GET 10 Jun 2005 : Fixed Trapezium quadrature (it was providing results which
-;     were a factor of 2 too small).
+; R. Grainger, 7 Jun 2005 : Enlarged from GET's translation of RGG FORTRAN
+; G. Thomas, 10 Jun 2005 : Fixed Trapezium quadrature (it was providing results
+;     which were a factor of 2 too small).
 
     N = Double(NPts)        ; Double version of Npts
-    Abscissa = dblarr(NPts) ;Quadrature points
-    Weight   = dblarr(NPts) ;and weights
-    Sigfig   = 14           ;Minimum precision of Double data type in IDL
+    Abscissa = dblarr(NPts) ; Quadrature points
+    Weight   = dblarr(NPts) ; and weights
+    Sigfig   = 14           ; Minimum precision of Double data type in IDL
 
     Case strupcase(Quadtype) of
     'T': begin
@@ -117,28 +117,28 @@ Pro Quadrature, Quadtype, NPts, Abscissa, Weight
           Term = 1
           Zeros = NPts-2
         End
-        else: Stop,'Error in quadrature: Invalid quadrature type'
-        Endcase
+        Else: Stop,'Error in quadrature: Invalid quadrature type'
+        EndCase
 
-        for Zero=1,Zeros do begin
+        For Zero=1,Zeros do begin
             lx = 19262d0   ; Any number, Don's birthday apparently.
             x = Firstguess(QuadType,NPts,Zero)
-            while abs(x - lx) gt 1d1^(-SigFig) do begin
+            While Abs(x - lx) gt 1d1^(-SigFig) do begin
               lx = x
               x = x - NewtonG(QuadType,NPts,x)
-            endwhile
+            EndWhile
             Abscissa(Term)=x
             Legendre,n,x,Pl,Pm,Pn
             Case strupcase(Quadtype) of
             'G': Weight(Term) = 2d0 * (1d0-X*X) / (N*Pm)^2
             'R': Weight(Term) = (1d0-x) / (n*Pm)^2
-            'L': Weight(Term) = 2d0 / (double(n*(n-1))*Pm^2)
-            Endcase
+            'L': Weight(Term) = 2d0 / (Double(n*(n-1))*Pm^2)
+            EndCase
             Term = Term + 1
-        endfor
+        EndFor
         Abscissa = Reverse(Abscissa)
         Weight = Reverse(Weight)
-    Endelse
+    EndElse
     EndCase
 
     Return

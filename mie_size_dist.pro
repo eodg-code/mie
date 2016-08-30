@@ -157,7 +157,7 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
 
     if not keyword_set(npts) then begin
 ;       Accurate calculation requires 0.1 step size in x
-        Npts = (Long(2D0 * !dpi * (ru-rl) * Wavenumber/xres)) > 200
+        Npts = (long(2D0 * !dpi * (ru-rl) * Wavenumber/xres)) > 200
     endif
 
 ;   quadrature on the radii
@@ -169,8 +169,8 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
         W1P = W1 * Nd[0] * R^((1. - 3. * params[1]) / params[1]) * $
               exp(-R / (params[0] * params[1]))
     endif else if distname eq 'log_normal' then begin
-        W1P = W1 * Nd[0] / (sqrt(2D0) * sqrt(!dpi) * R * ALOG(params[1])) * $
-              exp(-0.5D0*(ALOG(R/params[0]) / ALOG(params[1]))^2)
+        W1P = W1 * Nd[0] / (sqrt(2D0) * sqrt(!dpi) * R * alog(params[1])) * $
+              exp(-0.5D0*(alog(R/params[0]) / alog(params[1]))^2)
     endif
 
     Dx = 2D0 * !dpi * R * Wavenumber
@@ -205,14 +205,14 @@ pro mie_size_dist, distname, Nd, params, Wavenumber, Cm, Dqv=Dqv, dlm=dlm, $
 ;           DSPM = dblarr(4,Inp,Npts)
 ;           AA = 2d0 / (Dx^2 * Dqsc)
 ;           for i = 0,Inp-1 do begin
-;               DSPM[0,i,*] =  AA * double( Xs1[i,*]*CONJ(Xs1[i,*]) + $
-;                                           Xs2[i,*]*CONJ(Xs2[i,*]))
-;               DSPM[1,i,*] =  AA * double( Xs1[i,*]*CONJ(Xs2[i,*]) + $
-;                                           Xs2[i,*]*CONJ(Xs1[i,*]))
-;               DSPM[2,i,*] = -AA * double( Xs1[i,*]*CONJ(Xs1[i,*]) - $
-;                                           Xs2[i,*]*CONJ(Xs2[i,*]))
-;               DSPM[3,i,*] = -AA * double((Xs1[i,*]*CONJ(Xs2[i,*]) - $
-;                                           Xs2[i,*]*CONJ(Xs1[i,*])) * $
+;               DSPM[0,i,*] =  AA * double( Xs1[i,*]*conj(Xs1[i,*]) + $
+;                                           Xs2[i,*]*conj(Xs2[i,*]))
+;               DSPM[1,i,*] =  AA * double( Xs1[i,*]*conj(Xs2[i,*]) + $
+;                                           Xs2[i,*]*conj(Xs1[i,*]))
+;               DSPM[2,i,*] = -AA * double( Xs1[i,*]*conj(Xs1[i,*]) - $
+;                                           Xs2[i,*]*conj(Xs2[i,*]))
+;               DSPM[3,i,*] = -AA * double((Xs1[i,*]*conj(Xs2[i,*]) - $
+;                                           Xs2[i,*]*conj(Xs1[i,*])) * $
 ;                                   complex(0.0d, 1.0d))
 ;           endfor
         endif else begin
