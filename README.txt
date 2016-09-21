@@ -1,8 +1,8 @@
 OVERVIEW
 --------
 
-This file describes the Mie routines in this directory that are written
-in IDL or FORTRAN (but called from IDL).
+This file describes the Mie routines in this directory that are written in IDL
+or FORTRAN (but called from IDL).
 
 The routines available are:
 
@@ -12,8 +12,7 @@ Mie Scattering routines:
 mie_single.pro
     Calculates scattering parameters for a single particle.
 mie_derivs.pro
-    Calculates scattering parameters and derivatives for a single
-    particle.
+    Calculates scattering parameters and derivatives for a single particle.
 mie_lognormal.pro
     Calculates scattering parameters for a modified gamma or log-normal
     distribution of particles.
