@@ -14,15 +14,16 @@
 ;     [, /SILENT], Dqxt, Dqsc, Dqbk, Dg [, Xs1] [, Xs2] [, SPM]
 ;
 ; INPUTS:
-;     Dx:      A 1D array of particle size parameters
-;     Cm:      The complex refractive index of the particles
+;     Dx:      Particle size parameter(s)
+;     Cm:      Complex refractive index of the particle(s)
 ;
 ; OPTIONAL INPUTS:
 ;
 ; KEYWORD PARAMETERS:
-;     Dqv:     An array of the cosines of scattering angles at which to compute
-;              the phase function.
-;     DLM:     If set the code will call the IDL DLM version of the algorithm.
+;     Dqv:     Cosines of scattering angles at which to compute the intensity
+;              functions etc.
+;     DLM:     If set the IDL DLM version of the algorithm will be used instead
+;              of the IDL coded version.
 ;     mthread: Controls the number of threads which will be utilised by the DLM
 ;              version of the algorithm. If not set by default the code will use
 ;              1 thread. The behaviour of the code for different values of this
@@ -38,24 +39,24 @@
 ;     SILENT:  If set all warning messages issued by the code will be suppressed.
 ;
 ; OUTPUTS:
-;     Dqxt:    The extinction efficiency
-;     Dqsc:    The scattering efficiency
-;     Dqbk:    The backscattering efficiency
-;     Dg:      The asymmetry parameter
+;     Dqxt:    Extinction efficiency
+;     Dqsc:    Scattering efficiency
+;     Dqbk:    Backscattering efficiency
+;     Dg:      Asymmetry parameter
 ;
 ; OPTIONAL OUTPUTS:
-;     Xs1:     The first amplitude function - amplitude of light polarized in
-;              the plane perpendicular to the directions of incident light
-;              propagation and observation.
-;     Xs2:     The second amplitude function - amplitude of light polarized in
-;              the plane parallel to the directions of incident light
-;              propagation and observation. NB. Xs1 and Xs2 are complex arrays
-;              of the same dimension as Dqv and are only calculated if Dqv is
-;              specified.
-;     SPM:     The scattering phase matrix elements F11 (SPM[0,*,*]), F33
+;     Xs1:     First amplitude function - amplitude of light polarized in the
+;              plane perpendicular to the directions of incident light.
+;              propagation and observation. Xs1 is complex arrays of the same
+;              dimension as Dqv and is only calculated if Dqv is specified.
+;     Xs2:     Second amplitude function - amplitude of light polarized in the
+;              plane parallel to the directions of incident light propagation
+;              and observation. Xs2 is complex arrays of the same dimension as
+;              Dqv and is only calculated if Dqv is specified.
+;     SPM:     Scattering phase matrix elements F11 (SPM[0,*,*]), F33
 ;              (SPM[1,*,*]), F12 (SPM[2,*,*]), F34 (SPM[3,*,*]), where the 2nd
 ;              dimension is the same dimension as Dqv and the 3rd dimension is
-;              the same dimension as Dx. Also only calculated if Dqv is
+;              the same dimension as Dx. Only calculated if Dqv is
 ;              specified.
 ;
 ; KEYWORD OUTPUTS:

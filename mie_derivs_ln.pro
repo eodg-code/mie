@@ -21,21 +21,21 @@
 ;     [, di1dN] [, di1dRm] [, di1dS] [, di2dN] [, di2dRm] [, di2dS]
 ;
 ; INPUTS:
-;     N:          The number density of the particle distribution
+;     N:          Number density of the particle distribution
 ;     Rm:         Median radius of the particle distribution (microns)
-;     S:          The spread of the distribution, such that the standard
-;                 deviation of ln(r) is ln(S)
-;     wavenumber: wavenumber of light, defined as 1/wavelength. A positive
-;                 scalar whose units match those of Rm.
-;     Cm:         Complex refractive index
+;     S:          Spread of the distribution, such that the standard deviation
+;                 of ln(r) is ln(S)
+;     wavenumber: Wavenumber of light, defined as 1/wavelength. A positive
+;                 scalar whose units match those of Rm
+;     Cm:         Complex refractive index of the particle(s)
 ;
 ; KEYWORD PARAMETERS:
-;     Dqv:        An array of the cosines of scattering angles at which to
-;                 compute the intensity functions.
+;     Dqv:        Cosines of scattering angles at which to compute the intensity
+;                 functions etc
 ;
 ; OUTPUTS:
-;     Bext:       The volume extinction coefficient
-;     Bsca:       The volume scattering coefficient
+;     Bext:       Volume extinction coefficient
+;     Bsca:       Volume scattering coefficient
 ;     dBextdN:    Derivative of the extinction coefficient wrt the number density
 ;     dBextdRm:   Derivative of the extinction coefficient wrt the mean radius
 ;     dBextdS:    Derivative of the extinction coefficient wrt the spread
@@ -43,11 +43,11 @@
 ;     dBscadRm:   Derivative of the scattering coefficient wrt the mean radius
 ;     dBscadS:    Derivative of the scattering coefficient wrt the
 ;                 spread
-;     i1:         The first intensity function - intensity of light polarised in
+;     i1:         First intensity function - intensity of light polarised in
 ;                 the plane perpendicular to the directions
 ;                 of incident light propagation and observation. Only
 ;                 calculated if Dqv is specified.
-;     i2:         The second intensity function - intensity of light polarised in
+;     i2:         Second intensity function - intensity of light polarised in
 ;                 the plane parallel to the directions of
 ;                 incident light propagation and observation. Only
 ;                 calculated if Dqv is specified.

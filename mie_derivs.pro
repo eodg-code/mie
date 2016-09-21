@@ -21,19 +21,19 @@
 ;     [, dASYMdRem=dASYMdRem] [, dASYMdImm=dASYMdImm]
 ;
 ; INPUTS:
-;     Dx:        The particle size parameter
-;     Cm:        The complex refractive index of the particle
-;     Dqv:       The cosine of the scattering angles at which to calculate the
+;     Dx:        Particle size parameter(s)
+;     Cm:        Complex refractive index of the particle(s)
+;     Dqv:       Cosines of the scattering angles at which to calculate the
 ;                intensity functions etc
 ;
 ; OPTIONAL INPUTS:
 ;
 ; KEYWORD PARAMETERS:
-;     SILENT:    Don't give warnings about positive k values.
+;     SILENT:    Don't give warnings about positive k values
 ;
 ; OUTPUTS:
-;     Qext:      The extinction efficiency
-;     Qsca:      The extinction efficiency
+;     Qext:      Extinction efficiency
+;     Qsca:      Scattering efficiency
 ;     dQextdx:   Derivative of the extinction efficiency wrt the particle size
 ;                parameter
 ;     dQextdRem: Derivative of the extinction efficiency wrt the real part of
@@ -46,18 +46,25 @@
 ;                the refractive index
 ;     dQscadImm: Derivative of the scattering efficiency wrt the imaginary part
 ;                of the refractive index
-;     i1:        The first intensity function - intensity of light polarized in
-;                the plane perpendicular to the directions of incident light
+;     i1:        First intensity function - intensity of light polarized in the
+;                plane perpendicular to the directions of incident light
 ;                propagation and observation.
-;     i2:        The second intensity function - intensity of light polarized in
-;                the plane parallel to the directions of incident light
-;                propagation and observation.
-;     di1dx:     Derivatives of the intensity functions wrt the
-;     di2dx:     particle size parameter
-;     di1dRem:   Derivatives of the first intensity function wrt to
-;     di1dImm:   the real and imaginary parts of the refractive index
-;     di2dRem:   Derivatives of the second intensity function wrt
-;     di2dImm:   to the real and imaginary parts of the refractive index
+;     i2:        Second intensity function - intensity of light polarized in the
+;                plane parallel to the directions of incident light propagation
+;                and observation.
+;     di1dx:     Derivative of the first intensity function wrt the particle
+;                size parameter
+;     di2dx:     Derivative of the second intensity function wrt the particle
+;                size parameter
+;     di1dRem:   Derivative of the first intensity function wrt to the real part
+;                of the refractive index
+;     di1dImm:   Derivative of the first intensity function wrt to the imaginary
+;                part of the refractive
+;                index
+;     di2dRem:   Derivative of the second intensity function wrt to the real
+;                part of the refractive index
+;     di2dImm:   Derivative of the second intensity function wrt to the
+;                imaginary part of the refractive index
 ;
 ;     NB. The values of involving the intensity functions are arrays of the same
 ;     dimension as Dqv and are only calculated if Dqv is specified.

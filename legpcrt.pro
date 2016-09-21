@@ -1,10 +1,10 @@
 pro legpcrt, Inlc, lc, Inp, qv, phase
 
-; Inlc  = number of legendre coefficient
-; lc    = legendre coefficients
-; Inp   = number of quadrature value=number of angles
+; Inlc  = Number of Legendre coefficient
+; lc    = Legendre coefficients
+; Inp   = Number of quadrature value=number of angles
 ; qv    = cos(angles)
-; phase = recomputed phase function
+; phase = Recomputed phase function
 
 ;   Imaxnp = 1100
     Imaxnp = 20000

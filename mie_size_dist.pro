@@ -3,17 +3,17 @@
 ;     mie_size_dist
 ;
 ; PURPOSE:
-;     Calculates the scattering parameters of a log normal distribution of
-;     spherical particles.
+;     Calculates the scattering parameters of a size distribution of spherical
+;     particles.
 ;
 ; CATEGORY:
 ;     EODG Mie routines
 ;
 ; CALLING SEQUENCE:
 ;     mie_size_dist, distname, Nd, params, wavenumber, Cm [, Dqv = Dqv] $
-;     [, Npts=Npts] [, xres=xres] [, info=info] [, /DLM] [, mthread=mthread] $
-;     [, /SILENT], Bext, Bsca, w, g [, SPM] [, Bbac=Bbac] [, Gavg=Gavg] $
-;     [, Vavg=Vavg] [, Ravg=Ravg] [, RVW=RVW]
+;     [, Npts=Npts] [, xres=xres] [, /DLM] [, mthread=mthread] [, /SILENT], $
+;     Bext, Bsca, w, g [, SPM] [, Bbac=Bbac] [, Gavg=Gavg] [, Vavg=Vavg] $
+;     [, Ravg=Ravg] [, RVW=RVW] [, info=info]
 ;
 ; INPUTS:
 ;     distname    Name of the size distribution. 'log_normal' or 'modified_gamma'
@@ -29,25 +29,22 @@
 ;                     params[1] : b
 ;                     params[2] : minimum radius in the distribution
 ;                     params[3] : maximum radius in the distribution
-;     wavenumber: wavenumber of light (units must match units of the size
+;     wavenumber: Wavenumber of light (units must match units of the size
 ;                 distribution)
-;     Cm:         Complex refractive index
+;     Cm:         Complex refractive index of the particle(s)
 ;
 ; KEYWORD PARAMETERS:
-;     Dqv:        An array of the cosines of scattering angles at which to
-;                 compute the phase function.
-;     Npts:       Allows the user to override the automatically calculated
-;                 number of quadrature points for the integration over size.
-;                 NOTE: reducing the number of abscissa can substantially
-;                 decrease the accuracy of the result - BE CAREFUL!!!!
+;     Dqv:        Cosines of scattering angles at which to compute the intensity
+;                 functions etc.
+;     Npts:       If set, this keyword overrides the default calculation of the
+;                 quadrature points (which provides points at 0.1 spacing in the
+;                 size parameter). NOTE: reducing the number of abscissa can
+;                 substantially decrease the accuracy of the result. BE CAREFUL!
 ;     xres:       Sets the spacing of the quadrature points (in size parameter).
 ;                 Overridden by Npts. Default is 0.1. The same warning as Npts
 ;                 applies here!
-;     info:       Named variable that, on return, will contain a structure
-;                 containing the number of abscissa points and the maximum and
-;                 minimum size parameters used.
-;     DLM:        If set the IDL DLM version of the Mie scattering procedure
-;                 will be called rather than the IDL coded version.
+;     DLM:        If set the IDL DLM version of the algorithm will be used
+;                 instead of the IDL coded version.
 ;     mthread:    Controls the number of threads which will be utilised by the
 ;                 DLM version of the algorithm. If not set by default the code
 ;                 will use 1 thread. The behaviour of the code for different
@@ -64,23 +61,26 @@
 ;                 suppressed.
 ;
 ; OUTPUTS:
-;     Bext:       The extinction coefficient
-;     Bsca:       The scattering coefficient
-;     w:          The single scatter albedo
-;     g:          The asymmetry parameter
+;     Bext:       Total extinction coefficient of the distribution
+;     Bsca:       Total scattering coefficient of the distribution
+;     w:          Single scatter albedo of the distribution
+;     g:          Asymmetry parameter of the distribution
 ;
 ; OPTIONAL OUTPUTS:
-;     SPM:        The scattering phase matrix elements F11 (SPM[0,*]), F33
+;     SPM:        Scattering phase matrix elements F11 (SPM[0,*]), F33
 ;                 (SPM[1,*]), F12 (SPM[2,*]), F34 (SPM[3,*]), where the 2nd
 ;                 dimension is the same dimension as Dqv. Also only calculated
 ;                 if Dqv is specified.
 ;
 ; KEYWORD OUTPUTS:
-;     Bbac:       The backscatter coefficient
-;     Gavg:       The average projected area per particle
-;     Vavg:       The average volume per particle
-;     Ravg:       The average radius
-;     RVW:        The volume-weighted average radius
+;     Bbac:       Backscatter coefficient
+;     Gavg:       Average projected area per particle
+;     Vavg:       Average volume per particle
+;     Ravg:       Average radius
+;     RVW:        Volume-weighted average radius
+;     info:       Named variable that, on return, will contain a structure
+;                 containing the number of abscissa points and the maximum and
+;                 minimum size parameters used.
 ;
 ; RESTRICTIONS:
 ;     Note, this procedure calls the mie_single (or mie_dlm_single), quadrature

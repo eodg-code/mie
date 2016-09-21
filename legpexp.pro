@@ -7,11 +7,11 @@ pro legpexp, Inp, qv, qw, phase, Inlc, lc
 ;
 ; Converted from the "Alegpexp" fortran subroutine written by Don Grainger.
 ;
-; Inp   = number of points
-; qv    = Legendre point
-; qw    = Legendre weight
-; phase = Input (phase) function
-; lc    = Legendre coefficients
+; Inp             = Number of points
+; qv              = Legendre point
+; qw              = Legendre weight
+; phase           = Input (phase) function
+; lc              = Legendre coefficients
 ; lpnm, lpnm, lpn = Legendre polynomials
 
 ;   Imaxnp = 1100

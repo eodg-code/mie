@@ -13,13 +13,13 @@ mie_single.pro
     Calculates scattering parameters for a single particle.
 mie_derivs.pro
     Calculates scattering parameters and derivatives for a single particle.
-mie_lognormal.pro
+mie_size_dist.pro
     Calculates scattering parameters for a modified gamma or log-normal
     distribution of particles.
 mie_derivs_ln.pro
     Calculates scattering parameters and derivatives for a modified gamma or
     log-normal distribution of particles.
-DLM/mie_single.dlm etc
+dlm-code/mie_single.dlm
     A IDL DLM version of mie_single.pro. NOTE: This procedure no longer returns
     the phase function, as this was causing segmentation faults. The scattering
     functions Xs1 and Xs2 can be used to calculate the phase function outside
@@ -62,3 +62,18 @@ Edit make.inc appropriately.
 make
 
 Note: The default in make.inc.example is for the EODG computing environment.
+
+
+USAGE
+-----
+In order to use this code the IDL_PATH and IDL_DLM_PATH variables must be set
+to this directory and the dlm-code/ directory.  These may be set either as an
+environmental variable or within IDL with the PREF_SET command.
+
+See the procedure headers for usage details.
+
+
+CONTACT
+-------
+For questions, comments, or bug reports please email Greg McGarragh at:
+g.mcgarragh1@physics.ox.ac.uk.

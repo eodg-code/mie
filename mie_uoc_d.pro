@@ -13,27 +13,27 @@
 ;     mie_uoc_d, Dx, Cm, Dqv [, Inp=Inp] Xs1, Xs2, Dqxt, Dqsc, Dqbk, Dg, Dph
 ;
 ; INPUTS:
-;     Dx:   A 1D array of particle size parameters
-;     Cm:   The complex refractive index of the particles
-;     Dqv:  The cosine of the scattering angles at which to calculate the
-;           intensity functions etc
+;     Dx:   Particle size parameter(s)
+;     Cm:   Complex refractive index of the particle(s)
+;     Dqv:  Cosines of scattering angles at which to compute the intensity
+;           functions etc.
 ;
 ; KEYWORD PARAMETERS:
 ;     Inp:  Number of scattering angles at which to calculate intensity
 ;           functions etc (default = 1)
 ;
 ; OUTPUTS:
-;     Xs1:  The first amplitude function - amplitude of light polarised in the
-;           plane perpendicular to the directions of incident light propagation
-;           and observation.
-;     Xs2:  The second amplitude function - amplitude of light polarised in the
+;     Xs1:  First amplitude function - amplitude of light polarised in the plane
+;           perpendicular to the directions of incident light propagation and
+;           observation.  Xs1 is a complex array of the same dimension as Dqv.
+;     Xs2:  Second amplitude function - amplitude of light polarised in the
 ;           plane parallel to the directions of incident light propagation and
-;           observation. NB. Xs1 and Xs2 are complex arrays of the same
-;           dimension as Dqv
-;     Dqxt: The extinction efficiency
-;     Dqsc: The scattering efficiency
-;     Dg:   The asymmetry parameter
-;     Dph:  The phase function - an array of the same dimension as Dqv.
+;           observation. Xs2 is a complex array of the same dimension as Dqv.
+;     Dqxt: Extinction efficiency
+;     Dqsc: Scattering efficiency
+;     Dqbk: Backscattering efficiency
+;     Dg:   Asymmetry parameter
+;     Dph:  Phase function - an array of the same dimension as Dqv.
 ;
 ; OPTIONAL OUTPUTS:
 ;

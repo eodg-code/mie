@@ -1,15 +1,16 @@
 pro mieext_f, Npts, Dx, Cm, Dqxt, Dqsc, Dg
 
 ; Multi architecture Mie routine.
+;
 ; INPUT
-; Npts, I4,       number of values of the size parameter (X)
-; Dx,   R8(Npts), vector of size parameter values
-; Cm,   C8,       complex refractive index (same for all size values)
+; Npts, I4,       Number of size parameters in <tt>Dx</tt>
+; Dx,   R8(Npts), Particle size parameter(s)
+; Cm,   C8,       Complex refractive index of the particles
 ;
 ; OUTPUT
-; Dqxt, R8(Npts)  vector of extinction efficiency
-; Dqsc, R8(Npts)  vector of scattering efficiency
-; Dg,   R8(Npts)  vector of asymmetry parameter
+; Dqxt, R8(Npts), Extinction efficiency
+; Dqsc, R8(Npts), Scattering efficiency
+; Dg,   R8(Npts), Asymmetry parameter
 
     case !Version.arch of
         'x86'  : status = CALL_EXTERNAL('/home/crun/eodg/idl/mie/mieext_x86.so'  , $
