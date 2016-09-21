@@ -16,19 +16,19 @@
 ;     [, Vavg=Vavg] [, Ravg=Ravg] [, RVW=RVW]
 ;
 ; INPUTS:
-;     distname    Name of the size distribution. 'modified_gamma' according to
-;                 Hansen and Travis 1974 or 'log_normal'.
+;     distname    Name of the size distribution. 'log_normal' or 'modified_gamma'
+;                 according to Hansen and Travis 1974.
 ;     Nd:         Number density of the particle distribution
 ;     params:     Array of size distribution parameters
+;                 distname eq 'log_normal'
+;                     params[0] : Median radius of the particle distribution
+;                     params[1] : The spread of the distribution, such that the
+;                                 standard deviation of ln(r) is ln(S)
 ;                 distname eq 'modified_gamma'
 ;                     params[0] : a
 ;                     params[1] : b
 ;                     params[2] : minimum radius in the distribution
 ;                     params[3] : maximum radius in the distribution
-;                 distname eq 'log_normal'
-;                     params[0] : Median radius of the particle distribution
-;                     params[1] : The spread of the distribution, such that the
-;                                 standard deviation of ln(r) is ln(S)
 ;     wavenumber: wavenumber of light (units must match units of the size
 ;                 distribution)
 ;     Cm:         Complex refractive index
@@ -83,8 +83,8 @@
 ;     RVW:        The volume-weighted average radius
 ;
 ; RESTRICTIONS:
-;     Note, this procedure calls the MIE_SINGLE (or MIE_DLM_SINGLE), QUADRATURE
-;     and SHIFT_QUADRATURE procedures.
+;     Note, this procedure calls the mie_single (or mie_dlm_single), quadrature
+;     and shift_quadrature procedures.
 ;
 ; MODIFICATION HISTORY:
 ;     G. Thomas, Sep 2003: Based on mie.pro written by Don Grainger.

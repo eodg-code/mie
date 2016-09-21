@@ -64,8 +64,7 @@
 ; KEYWORD OUTPUTS:
 ;
 ; RESTRICTIONS:
-;     Note, this procedure calls the MIE_SINGLE and QUADRATURE
-;     procedures.
+;     Note, this procedure calls the mie_single and quadrature procedures.
 ;
 ; MODIFICATION HISTORY:
 ;     G. Thomas, Sep 2003: mie_derivs_ln.pro

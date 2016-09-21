@@ -238,8 +238,8 @@ pro mie_single, Dx, Cm, Dqv=Dqv, DLM=DLM, mthread=mthread, SILENT=SILENT, $
             Dqxt(Size) = Tnp1 * double(A + B)                 + Dqxt(Size)
             Dqsc(Size) = Tnp1 * double(A*conj(A) + B*conj(B)) + Dqsc(Size)
             if (N gt 1) then Dg(Size) = Dg(Size) $
-                      + (dN*dN - 1) * double(ANM1*conj(A) + BNM1 * conj(B)) / dN $
-                      + TNM1 * double(ANM1*conj(BNM1)) / (dN*dN - dN)
+                + (dN*dN - 1) * double(ANM1*conj(A) + BNM1 * conj(B)) / dN $
+                + TNM1 * double(ANM1*conj(BNM1)) / (dN*dN - dN)
             Anm1 = A
             Bnm1 = B
 
