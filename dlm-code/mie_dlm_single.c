@@ -8,8 +8,8 @@
  *    outargv[32] must have enough elements to hold the maximum possible
  *    number of positional arguments.
  * G McGarragh, 29, Jul 2015: Add support to output the 11, 33, 12, and
- * 34 elements of the 4x4 single scattering phase matrix F.  F11 is
- * identical to the old phase function output.
+ *    34 elements of the 4x4 single scattering phase matrix F.  F11 is
+ *    identical to the old phase function output.
  */
 
 /* ANSI */

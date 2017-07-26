@@ -15,7 +15,6 @@ pro legpcrt, Inlc, lc, Inp, qv, phase
     lpmn2 = dblarr(Imaxnp)
 
     for i = 0, Inp - 1 do begin
-
         N = 0
         lpmn2(i) = 1d0
         phase(i) = lc(N)
