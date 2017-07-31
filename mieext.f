@@ -1,20 +1,26 @@
-      Real * 4 Function MIEEXTIDL(Argc, Argv)
-*     IDL interface to use MieExt.  Function returns non-zero
-*     value to indicate an error has occured.
+! Copyright (C) 1998-2017 University of Oxford
+!
+! This source code is licensed under the GNU General Public License (GPL),
+! Version 3.  See the file COPYING for more details.
 
-*     INPUT/OUTPUT
+
+      Real * 4 Function MIEEXTIDL(Argc, Argv)
+!     IDL interface to use MieExt.  Function returns non-zero
+!     value to indicate an error has occured.
+
+!     INPUT/OUTPUT
       Integer * 8 Argc
       Integer * 8 Argv(*)
-*     LOCAL
+!     LOCAL
       Integer * 4 Error
 
       Error = 0
       Call MieExt(%Val(Argv(1)), %Val(Argv(2)), %Val(Argv(3)),
      1           %Val(Argv(4)), %Val(Argv(5)), %Val(Argv(6)), Error)
       MieExtIDL = Error
-      
+
       Return
-      End      
+      End
 
       Subroutine MieExt(Npts, DxA, SCm, DqxtA, DqscA, DgA, Error)
       Integer * 2  Imaxx
@@ -24,16 +30,16 @@
       Integer * 2  Itermax
       Parameter (Itermax = Imaxx*RiMax) ! must be large enough to cope with the largest possible nmx = x *real(scm) + 15
                                         ! or nmx =  Dx + 4.05*Dx**(1./3.) + 2.0
-*     INPUT
-      Integer*4    Npts   
+!     INPUT
+      Integer*4    Npts
       Real * 8	   DxA(Npts)
       Complex      SCm
-*     OUTPUT
+!     OUTPUT
       Real * 8	   DqxtA(Npts)
       Real * 8	   DqscA(Npts)
       Real * 8	   DgA(Npts)
       Integer * 4  Error
-*     LOCAL
+!     LOCAL
       Real * 8	   Dx
       Real * 8	   Dqxt
       Real * 8	   Dqsc
@@ -51,7 +57,7 @@
       Complex * 16 D(Itermax)
       Complex * 16 Xi,Xi0,Xi1
       Complex * 16 Y
-*     ACCELERATOR VARIABLES
+!     ACCELERATOR VARIABLES
       Integer * 2  Tnp1
       Integer * 2  Tnm1
       Real * 16    Dn
@@ -85,7 +91,7 @@
 	  End If
         End If
         NmX = Max(Real(NStop),Real(Abs(Y))) + 15.
-        If (Nmx .gt. Itermax) then 
+        If (Nmx .gt. Itermax) then
           Stop 'Fatal Error NMX Too Small'
         End if
         D(NmX) = Dcmplx(0,0)
@@ -121,7 +127,7 @@
 	  Dqxt = Tnp1 *      Dble(A + B)          + Dqxt
 	  Dqsc = Tnp1 * (A*Conjg(A) + B*Conjg(B)) + Dqsc
 	  If (N.Gt.1)
-     &      Dg = Dg + (dN*dN - 1) * Dble(ANM1*Conjg(A) + BNM1 * Conjg(B)) / dN + TNM1 * Dble(ANM1*Conjg(BNM1)) / (dN*dN - dN) 
+     &      Dg = Dg + (dN*dN - 1) * Dble(ANM1*Conjg(A) + BNM1 * Conjg(B)) / dN + TNM1 * Dble(ANM1*Conjg(BNM1)) / (dN*dN - dN)
 	  Anm1 = A
 	  Bnm1 = B
 	  Psi0 = Psi1

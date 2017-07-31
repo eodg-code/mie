@@ -1,3 +1,9 @@
+! Copyright (C) 1998-2017 University of Oxford
+!
+! This source code is licensed under the GNU General Public License (GPL),
+! Version 3.  See the file COPYING for more details.
+
+
 !     General purpose Mie scattering routine for single particles
 !
 !     Author: R Grainger 1990
@@ -38,13 +44,13 @@
                                  ! or nmx =  Dx + 4.05*Dx**(1./3.) + 2.0
       Integer * 4  Imaxnp
       Parameter (Imaxnp = 10000) ! Change this as required
-*     INPUT
+!     INPUT
       Real * 8     Dx
       Complex * 16 SCm
       Integer * 4  Inp
       Real * 8     Dqv(Inp)
 
-*     OUTPUT
+!     OUTPUT
       Complex * 16 Xs1(InP)
       Complex * 16 Xs2(InP)
       Real * 8     Dqxt
@@ -57,7 +63,7 @@
       Real * 8     F34(InP)
       Integer * 4  Error
 
-*     LOCAL
+!     LOCAL
       Integer * 4  I
       Integer * 4  NStop
       Integer * 4  NmX
@@ -82,7 +88,7 @@
       Complex * 16 Bscnum
       Complex * 16 Y
 
-*     ACCELERATOR VARIABLES
+!     ACCELERATOR VARIABLES
       Integer * 4  Tnp1
       Integer * 4  Tnm1
       Real * 16    Dn

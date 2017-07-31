@@ -1,8 +1,20 @@
+INTRODUCTION
+------------
+
+This is the EODG Mie code, one of many Mie spherical particle scattering
+implementations, but one that also computes derivatives of the input parameters
+w.r.t. the outputs.
+
+Starting August 1, 2007 there will be no more releases at
+http://eodg.atm.ox.ac.uk/MIE/.  To keep up to date please use the git repository
+at https://github.com/eodg/mie
+
+Below is a brief introduction.  For more details please see the official
+documentation at http://eodg.atm.ox.ac.uk/MIE/.
+
+
 OVERVIEW
 --------
-
-This file describes the Mie routines in this directory that are written in IDL
-or FORTRAN (but called from IDL).
 
 The routines available are:
 
@@ -76,4 +88,4 @@ See the procedure headers for usage details.
 CONTACT
 -------
 For questions, comments, or bug reports please email Greg McGarragh at:
-g.mcgarragh1@physics.ox.ac.uk.
+g.mcgarragh@physics.ox.ac.uk.

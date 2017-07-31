@@ -1,3 +1,11 @@
+
+/* Copyright (C) 1998-2017 University of Oxford
+ *
+ * This source code is licensed under the GNU General Public License (GPL),
+ * Version 3.  See the file COPYING for more details.
+ */
+
+
 /* File:       mie_dlm_single.c
  * Purpose:    Wrapper for the FORTRAN routine mieint in the file mieint.f
  * Author:     Gareth Thomas
