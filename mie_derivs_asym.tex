@@ -16,8 +16,8 @@
 \def \Qsca { {Q_{\mbox{\rm sca}}}}
 %\def \asym { {\langle \cos \theta \rangle} }
 \def \asym { {g} }
-\def \mied { \href{/home/crun/eodg/idl/mie/mie_derivs.pro}{\tt mie\_derivs.pro} } 
-\def \mies { \href{/home/crun/eodg/idl/mie/mie_single.pro}{\tt mie\_single.pro} } 
+\def \mied { \href{/home/crun/eodg/idl/mie/mie_derivs.pro}{\tt mie\_derivs.pro} }
+\def \mies { \href{/home/crun/eodg/idl/mie/mie_single.pro}{\tt mie\_single.pro} }
 
 
 
@@ -51,37 +51,37 @@ Following the notation from \citet{Grainger2004}, the asymmetry parameter, $\asy
 
 Taking the derivative wrt $x$, the size parameter, we obtain:
 \begin{align}
- \frac{\partial\;}{\partial x} \left[\Qsca \; \asym \right] &= 
- \frac{4}{x^2}\sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{ 
-                                                                \frac{\partial a_n}{\partial x} a^*_{n+1} + 
+ \frac{\partial\;}{\partial x} \left[\Qsca \; \asym \right] &=
+ \frac{4}{x^2}\sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{
+                                                                \frac{\partial a_n}{\partial x} a^*_{n+1} +
                                                                 a_n \frac{\partial a^*_{n+1}}{\partial x}  +
-                                                                \frac{\partial b_n}{\partial x} b^*_{n+1}  + 
+                                                                \frac{\partial b_n}{\partial x} b^*_{n+1}  +
                                                                 b_n \frac{\partial b^*_{n+1}}{\partial x}
                                                        \right\} \right. \nonumber \\
                              & \;\;\;\;\;\;\;\;\;\;\;\; \;\;\;\;\;
-                               \left.+ \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial x} + 
+                               \left.+ \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial x} +
                                     \frac{\partial a_n}{\partial x} b^*_n  \right\}\right]  \nonumber\\
                       &\;\;\;\;\; - \frac{8}{x^3} \left[   \sum_n^\infty \frac{n(n+2)}{n+1} \Re \left\{ a_na^*_{n+1} +  b_n b^*_{n+1}  \right\}
                                     +  \sum_n^\infty \frac{2n+1}{n(n+1)} \Re \left\{ a_n b^*_n \right\}\right] \\
-        &=\frac{4}{x^2}\sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{ 
-                                                                \frac{\partial a_n}{\partial x} a^*_{n+1} + 
+        &=\frac{4}{x^2}\sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{
+                                                                \frac{\partial a_n}{\partial x} a^*_{n+1} +
                                                                 a_n \frac{\partial a^*_{n+1}}{\partial x}  +
-                                                                \frac{\partial b_n}{\partial x} b^*_{n+1}  + 
+                                                                \frac{\partial b_n}{\partial x} b^*_{n+1}  +
                                                                 b_n \frac{\partial b^*_{n+1}}{\partial x}
                                                        \right\} \right. \nonumber \\
                              & \;\;\;\;\;\;\;\;\;\;\;\; \;\;\;\;\;
-                               \left.+ \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial x} + 
+                               \left.+ \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial x} +
                                     \frac{\partial a_n}{\partial x} b^*_n  \right\}\right]  - \frac{2}{x} \; \asym \; \Qsca.
 \end{align}
 Defining:
 \begin{align}
-\xi_x=\sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{ 
-                                                                \frac{\partial a_n}{\partial x} a^*_{n+1} + 
+\xi_x=\sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{
+                                                                \frac{\partial a_n}{\partial x} a^*_{n+1} +
                                                                 a_n \frac{\partial a^*_{n+1}}{\partial x}  +
-                                                                \frac{\partial b_n}{\partial x} b^*_{n+1}  + 
+                                                                \frac{\partial b_n}{\partial x} b^*_{n+1}  +
                                                                 b_n \frac{\partial b^*_{n+1}}{\partial x}
                                                        \right\}
-                               + \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial x} + 
+                               + \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial x} +
                                     \frac{\partial a_n}{\partial x} b^*_n  \right\}\right].
 \end{align}
 we say
@@ -90,7 +90,7 @@ we say
 \end{align}
 leading to
 \begin{align}
-\frac{\partial \asym}{\partial x} = 
+\frac{\partial \asym}{\partial x} =
                  \frac{1}{\Qsca}\left[ \frac{4}{x^2} \xi_x - \asym\left(\frac{2\Qsca}{x} + \frac{\partial \Qsca}{\partial x}\right)\right].\label{eq:dgdx}
 \end{align}
 
@@ -99,21 +99,21 @@ leading to
 
 Similarly, for the real and imaginary parts of refractive index, $m=m_r + i m_i$, we define $\xi_r$ and $\xi_i$:
 \begin{align}
- \xi_r &= \sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{ 
-                                                                \frac{\partial a_n}{\partial m_r} a^*_{n+1} + 
+ \xi_r &= \sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{
+                                                                \frac{\partial a_n}{\partial m_r} a^*_{n+1} +
                                                                 a_n \frac{\partial a^*_{n+1}}{\partial m_r}  +
-                                                                \frac{\partial b_n}{\partial m_r} b^*_{n+1}  + 
+                                                                \frac{\partial b_n}{\partial m_r} b^*_{n+1}  +
                                                                 b_n \frac{\partial b^*_{n+1}}{\partial m_r}
                                                        \right\}
-                               + \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial m_r} + 
+                               + \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial m_r} +
                                     \frac{\partial a_n}{\partial m_r} b^*_n  \right\}\right];\\
- \xi_i &= \sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{ 
-                                                                \frac{\partial a_n}{\partial m_i} a^*_{n+1} + 
+ \xi_i &= \sum_n^\infty \left[  \frac{n(n+2)}{n+1} \Re \left\{
+                                                                \frac{\partial a_n}{\partial m_i} a^*_{n+1} +
                                                                 a_n \frac{\partial a^*_{n+1}}{\partial m_i}  +
-                                                                \frac{\partial b_n}{\partial m_i} b^*_{n+1}  + 
+                                                                \frac{\partial b_n}{\partial m_i} b^*_{n+1}  +
                                                                 b_n \frac{\partial b^*_{n+1}}{\partial m_i}
                                                        \right\}
-                               + \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial m_i} + 
+                               + \frac{2n+1}{n(n+1)} \Re \left\{ a_n \frac{\partial b^*_n}{\partial m_i} +
                                     \frac{\partial a_n}{\partial m_i} b^*_n  \right\}\right],
 \end{align}
 and obtain the derivatives by:
