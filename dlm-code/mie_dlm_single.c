@@ -1,4 +1,3 @@
-
 /* Copyright (C) 1998-2017 University of Oxford
  *
  * This source code is licensed under the GNU General Public License (GPL),

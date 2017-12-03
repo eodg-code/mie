@@ -10,9 +10,9 @@
 ;     gen_sph_funcs
 ;
 ; PURPOSE:
-;     Computes generalized spherical functions required for the required to
-;     expand a single scattering phase matrix in the form required by radiative
-;     transfer solvers such as VLIDORT or XRTM.
+;     Computes generalized spherical functions required for the expantion of a
+;     single scattering phase matrix in the form required by radiative transfer
+;     solvers such as VLIDORT or XRTM.
 ;
 ; CATEGORY:
 ;     EODG Mie routines

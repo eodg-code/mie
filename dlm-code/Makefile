@@ -1,6 +1,4 @@
 # mie_dlm_single IDL DLM makefile
-# Gareth Thomas
-# Greg McGarragh
 
 # Location specific configurations
 include ../make.inc
