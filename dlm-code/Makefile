@@ -18,12 +18,12 @@ ifeq ($(FCOMP),gfortran)
         # gfortran flags
 	FC_FLAGS = -O3 -fPIC -ffixed-line-length-0
         #Linking flags
-	LD_FLAGS = -shared -lm $(GCC_OPENMP)
+	LD_FLAGS = -shared -lm
 else
         # ifort flags
 	FC_FLAGS = -O3 -extend_source -fpic
         # Linking flags
-	LD_FLAGS = -shared -lifcore -limf -lirc -L$(IFORT_DIR)/lib/intel64 $(GCC_OPENMP)
+	LD_FLAGS = -shared -lifcore -limf -lirc -L$(IFORT_DIR)/lib/intel64
 endif
 
 

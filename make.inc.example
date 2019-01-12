@@ -3,5 +3,5 @@ FCOMP = ifort
 #FCOMP = gfortran
 
 # Locations of IDL and ifort at EODG
-IDL_DIR = /usr/local/PACK/idl83/idl
-IFORT_DIR = /usr/local/PACK/composerxe
+IDL_DIR = /opt/exelis/idl
+IFORT_DIR = /opt/intel/composerxe
